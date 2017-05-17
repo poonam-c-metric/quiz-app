@@ -1,0 +1,49 @@
+<div class="col-md-6 col-md-offset-3">
+    <h2>Register</h2>
+    <form name="form" (ngSubmit)="f.form.valid && register(f.value)" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_first_name.valid }">
+            <label for="firstName">First Name</label>
+            <input type="text" class="form-control" name="member_first_name" [(ngModel)]="user.member_first_name" #member_first_name="ngModel" required />
+            <div *ngIf="f.submitted && !member_first_name.valid" class="help-block">First Name is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_last_name.valid }">
+            <label for="member_last_name">Last Name</label>
+            <input type="text" class="form-control" name="member_last_name" [(ngModel)]="user.member_last_name" #member_last_name="ngModel" required />
+            <div *ngIf="f.submitted && !member_last_name.valid" class="help-block">Last Name is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_username.valid }">
+            <label for="member_username">Username</label>
+            <input type="text" class="form-control" name="member_username" [(ngModel)]="user.member_username" #member_username="ngModel" required />
+            <div *ngIf="f.submitted && !member_username.valid" class="help-block">Username is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_active_email.valid }">
+            <label for="member_active_email">Email Id</label>
+            <input type="text" class="form-control" name="member_active_email" [(ngModel)]="user.member_active_email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" #member_active_email="ngModel" required>
+            <div *ngIf="f.submitted && member_active_email.errors && member_active_email.errors.required" class="help-block">EmailId is required</div>
+            <div *ngIf="member_active_email.errors && member_active_email.errors.pattern" class="help-block">Not valid email!</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_password.valid}">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="member_password" [(ngModel)]="user.member_password" #member_password="ngModel" required [minlength]="8" [maxlength]="16"/>
+            <div *ngIf="f.submitted && member_password.hasError('required')" class="help-block">Password is required</div>
+            <div *ngIf="member_password.hasError('minlength') && member_password.dirty" class="help-block">Password must be at least 8 characters long.</div>
+        </div>
+
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !member_confirm_password.valid}">
+            <label for="member_confirm_password">Confirm Password</label>
+            <input type="password" class="form-control" name="member_confirm_password" [(ngModel)]="user.member_confirm_password" #member_confirm_password="ngModel" required [minlength]="8" [maxlength]="16" [equalTo]="member_password"/>
+            <div *ngIf="f.submitted && member_confirm_password.hasError('required')" class="help-block">Confirm Password is required</div>
+            <div *ngIf="member_confirm_password.hasError('minlength') && member_confirm_password.dirty" class="help-block">Confirm Password must be at least 8 characters long.</div>
+            <br>
+            <div *ngIf="member_confirm_password.dirty && member_confirm_password.errors?.equalTo" class="help-block">Password and Confirm Password must match.</div>
+        </div>
+
+        <div class="form-group">
+             <div class="g-recaptcha" (setVerified) = "setVerified($event)" googlerecaptcha [siteKey] = "siteKey" [theme] = 'theme' ></div>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Register"/>
+            <a [routerLink]="['/login']" class="btn btn-link">Cancel</a>
+        </div>
+    </form>
+</div>

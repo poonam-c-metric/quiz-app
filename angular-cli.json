@@ -18,7 +18,8 @@
       "tsconfig": "tsconfig.json",
       "prefix": "app",
       "styles": [
-        "styles.css"
+        "styles.css",
+        "../node_modules/ng2-toasty/bundles/style.css"
       ],
       "scripts": [],
       "environments": {

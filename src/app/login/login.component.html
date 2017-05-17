@@ -1,0 +1,33 @@
+<div class="col-md-6 col-md-offset-3">
+    <h2>SIGN IN NOW</h2>
+    <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+            <label for="username">Email Id</label>
+            <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" required />
+            <div *ngIf="f.submitted && !username.valid" class="help-block">Email Id is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" [(ngModel)]="model.password" #password="ngModel" required />
+            <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>
+        </div>
+        <div class="form-group">
+            <a data-toggle="modal" href="#forgetPasswordModal" (click)="forgetPasswordModal.open()"> Forgot Password?</a>
+        </div>
+        <div class="form-group">
+            <button [disabled]="loading" class="btn btn-primary">Login</button>
+            <a [routerLink]="['/register']" class="btn btn-link">Register</a>
+        </div>
+    </form>
+</div>
+
+<modal #forgetPasswordModal title="Forgot Password?" cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && resetPassword(emailid.value)">
+    <modal-content>
+        <label for="emailid">EmailId</label>
+        <!--<form name="form1" (ngSubmit)="fp.form1.valid && resetPassword(this.fp.value)" #fp="ngForm" novalidate>-->
+            <input type="text" class="form-control" name="emailid" [(ngModel)]="model.emailid" #emailid="ngModel" required email/>
+            <div *ngIf="emailid.hasError('required')" class="help-block">EmailId is required</div>
+            <div *ngIf="emailid.errors?.email" class="help-block">Please enter valid email address</div>
+        <!--</form>-->
+    </modal-content>
+</modal>
