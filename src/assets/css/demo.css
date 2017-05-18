@@ -89,3 +89,8 @@ my-app .main-panel .main-content .card{
 .tim-row h3{
     margin-top: 0;
 }
+
+.card .card-header {
+    margin: 0px !important;
+    float: none !important;
+}

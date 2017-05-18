@@ -125,6 +125,19 @@ app.put('/updateUser',function(req,res){
   });
 })
 
+
+app.get('/getCertificateDetails',function(req,res){
+  console.log(req.query.member_id);
+  connection.query("SELECT * FROM cs_certificate where id_added=?" , [req.query.member_id] ,
+      function(err, certdata) {
+          if(certdata && certdata.length>0){
+            res.status(200).json({'certificate' : certdata });
+          }else{
+            res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+          }
+      })
+});
+
 // Helper function to make API call to recatpcha and check response
 function verifyRecaptcha(key, callback) {
         https.get("https://www.google.com/recaptcha/api/siteverify?secret=" + SECRET + "&response=" + key, function(res) {

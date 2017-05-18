@@ -13,7 +13,7 @@ import { SidebarModule } from './sidebar/sidebar.module';
 
 
 import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService } from './_services/index';
+import { AuthenticationService, UserService, CertificateService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
@@ -53,6 +53,7 @@ import { UserComponent } from './user/user.component';
         AuthGuard,
         AuthenticationService,
         UserService,
+        CertificateService,
         {provide: LocationStrategy, useClass: HashLocationStrategy}
       ],
   bootstrap: [AppComponent]

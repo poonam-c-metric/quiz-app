@@ -8,10 +8,9 @@ export class UserService {
     constructor(private http: Http , private router: Router) { }
 
     create(user: User) {
-        return this.http.post('/api/registerUser', user, this.jwt()).map((response: Response) => {
+        return this.http.post('/api/registerUser', user, this.jwt())
+        .map((response: Response) => {
             let data = response.json();
-            console.log("Inside Create");
-            console.log(data);
             return data;
         });
     }

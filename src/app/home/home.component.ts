@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CertificateService } from '../_services/index';
+import { User } from '../_models/index';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +10,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  currentUser : User;
+  certificateData : Object;
 
-  ngOnInit() {
+  constructor(private certificateService : CertificateService , private router : Router) {
+  	this.currentUser = JSON.parse(localStorage.getItem('currentUser'))[0];
   }
 
+  ngOnInit() {
+  	this.getCertificateData()
+  }
+
+  getCertificateData(){
+	  this.certificateService.getCertificateData(this.currentUser.member_id)
+            .subscribe(
+                data => {
+                    this.certificateData = data['certificate'];
+                    console.log(this.certificateData);
+                },
+                error => {
+                   console.log(error);
+                });
+    }
+
+    changeURL(){
+    	console.log('Inside change URL');
+    	this.router.navigate(['/certificate']);
+    	console.log(this.router);
+    }
 }

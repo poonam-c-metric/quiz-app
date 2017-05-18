@@ -20,6 +20,7 @@ $(document).ready(function(){
     $('.sidebar .nav-container').append($moving_tab);
 
     $this = $('.sidebar .nav').find('li.active a');
+    console.log($this);
     animationSidebar($this, false);
     $('div').removeClass('.moving-tab');
     if (window.history && window.history.pushState) {
