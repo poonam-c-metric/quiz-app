@@ -90,7 +90,16 @@ my-app .main-panel .main-content .card{
     margin-top: 0;
 }
 
+
+/** CSS Override on 18-05-2017 */
+
 .card .card-header {
     margin: 0px !important;
     float: none !important;
+}
+.toggle, .toggle-on, .toggle-off { border-radius: 20px;}
+.toggle .toggle-handle , .toggle-handle:hover { border-radius: 20px; background-color: white;}
+
+.input-group .has-error .help-block {
+    color: #f44336 !important;
 }

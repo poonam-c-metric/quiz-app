@@ -1,2 +1,79 @@
-<br><br><br>
-<h3>certificate works!</h3>
+<div class="col-md-6 col-md-offset-3">
+    <h2>Create Certificate</h2>
+    <form name="form" (ngSubmit)="f.form.valid && createCertificate()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !certificate_name.valid }">
+            <label for="certificate_name">Program Name:</label>
+            <input type="text" class="form-control" name="certificate_name" [(ngModel)]="certificateData.certificate_name" #certificate_name="ngModel" required />
+            <div *ngIf="f.submitted && !certificate_name.valid" class="help-block">Program Name is required</div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" class="form-control" name="desciption" [(ngModel)]="certificateData.certificate_purpose" #certificate_purpose="ngModel"/>
+        </div>
+        <div class="form-group">
+            <label for="organization_name">Organization Name:</label>
+            <input type="text" class="form-control" name="organization_name" [(ngModel)]="certificateData.institute_name"/>
+        </div>
+        <div class="input-group">
+            <div class="col-md-3" style="padding-left:0px !important">
+                <label for="branding">Branding:</label>
+            </div>
+            <div class="col-md-3">
+               <input #fileUpload type="file" name="single" ng2FileSelect [uploader]="uploader"/>
+               <span *ngIf="certificateData.certificate_logo!=null">
+                    <img src='uploads/{{certificateData.certificate_logo}}' style="width:100px;height:50px"/>
+                </span>
+            </div>
+            <br/>
+            <div class="has-error">
+                <div *ngIf="errorMessage" class="help-block" style="clear : both">  {{errorMessage}}</div>
+            </div>
+        </div>
+        <br>
+        <div (click)="showAdvancedSetting()">
+            <a>Show Advanced Setting</a>
+        </div>
+        <div [hidden]="!showAdvancedFlag">
+            <div class="form-group">
+                <label for="selfregisteration">Self Registration:</label>
+                <ui-switch name="selfregisteration" [(ngModel)]="certificateData.allow_self_registration" size="medium" [checked]="false"></ui-switch>
+            </div>
+            <div class="form-group">
+                <label for="ecommerce">E-commerce:</label>
+                <ui-switch name="ecommerce" [(ngModel)]="ecommerce" size="medium"
+                (ngModelChange)="changeCertCost($event)" [checked]="false"></ui-switch>
+            </div>
+            <div class="form-group" *ngIf="ecommerce">
+                <label for="studentcost">Cost to Student:</label>
+                <input type="text" class="form-control" name="cert_cost" [(ngModel)]="certificateData.cert_cost" #cert_cost="ngModel"  number/>
+                <div *ngIf="cert_cost.errors?.number" class="help-block">Cost only contains numeric value.</div>
+            </div>
+            <div class="form-group">
+                <label for="certificate_mode">Program Mode:</label>
+                <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="course" /> Course
+                <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="catalog" /> Catalog
+            </div>
+            <div class="form-group" *ngIf="certificateData.certificate_mode=='catalog'">
+                <label for="passingscore">Passing Score:</label>
+                <input type="text" class="form-control" name="points" [(ngModel)]="certificateData.points" #points="ngModel" number/>
+                <div *ngIf="points.errors?.number" class="help-block">Passing score only contains numeric value.</div>
+            </div>
+            <div class="form-group">
+                <label for="randomize_question">Randomize Questions:</label>
+                <ui-switch name="rand_questions" [(ngModel)]="certificateData.rand_questions" size="medium" [checked]="false"></ui-switch>
+            </div>
+            <div class="form-group">
+                <label for="student_answer">Student Answers:</label>
+                <ui-switch name="suppress_answer" [(ngModel)]="certificateData.suppress_answer" size="medium" [checked]="false"></ui-switch>
+            </div>
+            <div class="form-group">
+                <label for="copy_teacher">Teacher Emails:</label>
+                <ui-switch name="copy_teacher" [(ngModel)]="certificateData.copy_teacher" size="medium" [checked]="false"></ui-switch>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+            <a [routerLink]="['/']" class="btn btn-link">Cancel</a>
+        </div>
+    </form>
+</div>

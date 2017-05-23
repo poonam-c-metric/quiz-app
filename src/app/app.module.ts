@@ -26,6 +26,9 @@ import { CertificateComponent } from './certificate/certificate.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserComponent } from './user/user.component';
+//import { UiSwitchModule } from '../../node_modules/angular2-ui-switch/dist/index';
+import { UiSwitchModule } from 'ngx-ui-switch/src';
+import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,8 @@ import { UserComponent } from './user/user.component';
     CertificateComponent,
     HomeComponent,
     NavbarComponent,
-    UserComponent
+    UserComponent,
+    FileSelectDirective
   ],
   imports: [
     BrowserModule,
@@ -47,6 +51,7 @@ import { UserComponent } from './user/user.component';
     SidebarModule,
     CustomFormsModule,
     ModalModule,
+    UiSwitchModule,
     ToastyModule.forRoot()
   ],
   providers: [
