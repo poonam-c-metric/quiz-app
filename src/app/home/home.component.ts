@@ -34,8 +34,7 @@ export class HomeComponent implements OnInit {
     }
 
     changeURL(){
-    	console.log('Inside change URL');
-    	this.router.navigate(['/certificate']);
-    	console.log(this.router);
+      this.router.navigate(['/certificate']);
     }
+
 }

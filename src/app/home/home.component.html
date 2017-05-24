@@ -8,7 +8,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="stats">
-                            Create A New Program
+                            <a (click)="changeURL()">Create A New Program</a>
                         </div>
                     </div>
                 </div>
@@ -19,15 +19,15 @@
                         <h4 class="title">{{certdata.certificate_name}}</h4>
                     </div>
                     <div class="card-content">
-                        <h4 class="title">3 Active Students</h4>
+                        <h4 class="title">
+                            <div *ngIf="certdata.is_active">PUBLISHED</div>
+                            <div *ngIf="!certdata.is_active">UNPUBLISHED</div>
+                        </h4>
                     </div>
                     <div class="card-footer">
                         <div class="stats">
                             <div class="col-lg-1 col-md-2 col-sm-2">
-                                <a (click)="changeURL()"><i class="material-icons">pageview</i></a>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-2">
-                                <a href="#certificate"><i class="material-icons">edit</i></a>
+                                <a [routerLink]="['/certificate',certdata.certificate_id]"><i class="material-icons">edit</i></a>
                             </div>
                             <div class="col-lg-1 col-md-2 col-sm-2">
                               <a href="#certificate"><i class="material-icons">delete</i></a>

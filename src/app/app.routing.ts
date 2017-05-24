@@ -17,6 +17,10 @@ const appRoutes: Routes = [
          	component: CertificateComponent
         },
         {
+             path : 'certificate/:certificate_id',
+             component: CertificateComponent
+        },
+        {
             path : '',
             component: HomeComponent
         },

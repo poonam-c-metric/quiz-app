@@ -4,7 +4,8 @@ var client = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'root',
-  database: 'certspring'
+  database: 'certspring',
+  dateStrings: 'date'
 })
 
 
