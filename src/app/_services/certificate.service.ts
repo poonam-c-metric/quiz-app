@@ -43,6 +43,15 @@ export class CertificateService {
     });
   }
 
+  deleteCertificateById(certid : number){
+     console.log('Inside service');
+     return this.http.delete("/api/deleteCertificateById?certificate_id="+certid)
+     .map((response: Response) => {
+        let data = response.json();
+        return data;
+      });
+  }
+
  // private helper methods
   private jwt() {
       // create authorization header with jwt token
