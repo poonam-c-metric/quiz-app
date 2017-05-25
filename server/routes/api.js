@@ -40,7 +40,6 @@ app.post('/registerUser',function(req, res){
     	req.body['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
     	req.body['last_login_ip'] = req.connection.remoteAddress.replace(/^.*:/, '');
     	req.body['member_password'] = common.encrypt(req.body['member_password']);
-      console.log(req.body);
     	connection.query('SELECT * FROM cs_members where member_active_email=?',req.body['member_active_email'],
     		function(err, rows) {
     	  		if (err) {
@@ -93,7 +92,6 @@ app.post('/loginUser',function(req,res){
           };
           var token = jwt.sign(tokenData, privateKey);
           req.session.accessToken = token;
-          console.log(req.session);
           res.status(200).json({'user' : user , 'token': token});
         }else{
           res.status(401).json({'message': 'Username or Password is incorrect' ,'code': 'Invalid Credentials'});
@@ -108,12 +106,9 @@ app.get('/logoutUser',function(req,res){
 });
 
 app.post('/resetPassword',function(req,res){
-  console.log('Inside reserPassword:'+req.body['emailId']);
   connection.query("SELECT * FROM cs_members where member_active_email='"+req.body['emailId']+"'",{},
     function(err, user) {
-        console.log(user);
         if(user && user.length>0){
-          console.log("In success:"+user.member_active_email);
           sendResetPasswordMail(user[0]);
           res.status(200).json({'message' : 'Mail sent Successfully' , 'code' : 'SUCCESS'});
         }else{
@@ -126,7 +121,6 @@ app.put('/updateUser',function(req,res){
   connection.query('UPDATE cs_members SET ? WHERE ?', [req.body['userdata'], { member_id: req.body["userdata"]["member_id"] }],function(err , result){
      if (err) {
       connection.query('SELECT * FROM cs_members where member_id=?',req.body["userdata"]["member_id"],function(err1,resp1){
-        console.log(resp1);
       });
       res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
      }else{
@@ -151,7 +145,6 @@ app.get('/getCertificateById',function(req,res){
   connection.query("SELECT * FROM cs_certificate where certificate_id=?" , [req.query.certificate_id] ,
       function(err, certdata) {
           if(certdata && certdata.length>0){
-            console.log(certdata);
             res.status(200).json({'certificate' : certdata });
           }else{
             res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
@@ -160,13 +153,11 @@ app.get('/getCertificateById',function(req,res){
 });
 
 app.post('/createCertificate',function(req, res){
-  console.log(req.body);
   req.body.date_added=moment().format('YYYY-MM-DD');
   req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
   connection.query('SELECT * FROM cs_certificate where certificate_name=?',req.body['certificate_name'],
         function(err, rows) {
             if (err) {
-              console.log(err);
               throw err;
             }
             else if(rows.length>0){
@@ -174,7 +165,6 @@ app.post('/createCertificate',function(req, res){
             } else {
               connection.query("INSERT INTO `cs_certificate` SET ?",req.body,function (err, results) {
                  if (err) {
-                  console.log(err.message);
                   res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
                  }else{
                   res.status(200).json({'message': 'Certificate created Successfully' ,'code': 'SUCCESS'});
@@ -185,12 +175,10 @@ app.post('/createCertificate',function(req, res){
  });
 
 app.put('/updateCertificate',function(req, res){
-  console.log(req.body);
   req.body.date_edited=moment().format('YYYY-MM-DD');
   req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
   connection.query("Update `cs_certificate` SET ? WHERE ?",[ req.body , { certificate_id : req.body.certificate_id }],function (err, results) {
      if (err) {
-      console.log(err.message);
       res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
      }else{
       if(results.affectedRows)
@@ -199,6 +187,18 @@ app.put('/updateCertificate',function(req, res){
   });
 });
 
+app.delete('/deleteCertificateById',function(req,res){
+    console.log(req.query.certificate_id);
+    connection.query("Delete FROM cs_certificate where certificate_id =?",req.query.certificate_id,function (err, results) {
+      if (err) {
+        res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
+      }else{
+        if(results.affectedRows)
+          res.status(200).json({'message': 'Certificate deleted Successfully' ,'code': 'SUCCESS'});
+      }
+    });
+  })
+
 /** File Upload coding **/
 
 var storage = multer.diskStorage({ //multers disk storage settings
@@ -206,8 +206,6 @@ var storage = multer.diskStorage({ //multers disk storage settings
         cb(null, './src/uploads/');
     },
     filename: function (req, file, cb) {
-        console.log("Inside filename")
-        console.log(JSON.stringify(file));
         var datetimestamp = Date.now();
         cb(null, file.originalname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     }
@@ -265,11 +263,10 @@ function sendConfirmationEmail(req,userid){
   "The Certspring Team<br>" +
   "support@Certspring.com";
 
-  console.log(html);
+
 
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
     if(err){
-      console.log(err);
       throw new Error('Problem sending email to: ' + TO_ADDRESS);
     }
     // Yay! Email was sent, now either do some more stuff or send a response back to the client
@@ -289,11 +286,8 @@ function sendResetPasswordMail(user){
   "The Certspring Team<br>" +
   "support@Certspring.com";
 
-  console.log(html);
-
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
     if(err){
-      console.log(err);
       throw new Error('Problem sending email to: ' + TO_ADDRESS);
     }
     // Yay! Email was sent, now either do some more stuff or send a response back to the client

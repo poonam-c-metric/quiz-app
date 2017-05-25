@@ -103,3 +103,6 @@ my-app .main-panel .main-content .card{
 .input-group .has-error .help-block {
     color: #f44336 !important;
 }
+.modal-backdrop {
+  z-index: -1;
+}
