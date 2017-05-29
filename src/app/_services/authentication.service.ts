@@ -13,7 +13,7 @@ export class AuthenticationService {
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
                 let data = response.json();
-                if (data.user && data.token) {
+                if (data.user && data.user.accessToken) {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('currentUser', JSON.stringify(data.user));
                 }

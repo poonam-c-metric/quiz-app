@@ -33,45 +33,57 @@ app.use(router);
 });
 
 app.post('/registerUser',function(req, res){
-  verifyRecaptcha(req.body["recaptcha"], function(success) {
-    if (success) {
-      delete req.body["recaptcha"];
-      delete req.body["member_confirm_password"];
-    	req.body['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
-    	req.body['last_login_ip'] = req.connection.remoteAddress.replace(/^.*:/, '');
-    	req.body['member_password'] = common.encrypt(req.body['member_password']);
-    	connection.query('SELECT * FROM cs_members where member_active_email=?',req.body['member_active_email'],
-    		function(err, rows) {
-    	  		if (err) {
-              throw err;
-            }
-    	  		else if(rows.length>0){
-    	  			res.status(303).json({'message': 'User with this emailId already exists','code': 'User Exists'});
-    	  		}else{
-              var tokenData = {
-                  emailId: req.body.member_active_email
-              };
-              var token = jwt.sign(tokenData, privateKey);
-              req.body['accessToken'] = token;
-    	  			connection.query("INSERT INTO `cs_members` SET ?",req.body,function (err, results) {
-    				   if (err) {
-    				   	res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-    				   }else{
-                sendConfirmationEmail(req.body,results.insertId);
-                req.session.accessToken = token;
-                connection.query('SELECT * FROM cs_members where member_id=?',results.insertId,function(err1,resp1){
-                  res.status(200).json({'user':resp1});
-                });
-    		  	   }
-    				});
-    	  		}
-    		});
-    }else{
-      res.status(303).json({'message': 'Captcha failed, sorry.','code': 'Captcha Failed'});
-    }
-  });
+  if(req.body['deviceType']==0){
+    console.log('Inside If');
+    verifyRecaptcha(req.body["recaptcha"], function(success) {
+      if (success) {
+        delete req.body["recaptcha"];
+        registerUser(req,res)
+      }else{
+        res.status(303).json({'message': 'Captcha failed, sorry.','code': 'Captcha Failed'});
+      }
+    });
+  }else{
+    console.log('Inside else');
+    registerUser(req,res);
+  }
 });
 
+function registerUser(req,res){
+  console.log(req.body['member_active_email']);
+  console.log(req.body);
+  delete req.body["member_confirm_password"];
+  delete req.body["deviceType"];
+  req.body['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
+  req.body['last_login_ip'] = req.connection.remoteAddress.replace(/^.*:/, '');
+  req.body['member_password'] = common.encrypt(req.body['member_password']);
+  connection.query('SELECT * FROM cs_members where member_active_email=?',req.body['member_active_email'],
+    function(err, rows) {
+        if (err) {
+          throw err;
+        }
+        else if(rows.length>0){
+          res.status(303).json({'message': 'User with this emailId already exists','code': 'User Exists'});
+        }else{
+          var tokenData = {
+              emailId: req.body.member_active_email
+          };
+          var token = jwt.sign(tokenData, privateKey);
+          req.body['accessToken'] = token;
+          connection.query("INSERT INTO `cs_members` SET ?",req.body,function (err, results) {
+           if (err) {
+            res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
+           }else{
+            sendConfirmationEmail(req.body,results.insertId);
+            req.session.accessToken = token;
+            connection.query('SELECT * FROM cs_members where member_id=?',results.insertId,function(err1,resp1){
+              res.status(200).json({'user':resp1[0]});
+            });
+           }
+        });
+      }
+    });
+}
 app.put('/activeUser',function(req,res){
   connection.query('UPDATE cs_members SET ? WHERE ?', [{ is_email_active: 1 }, { member_id: req.body["userId"] }],function(err , result){
      if (err) {
@@ -83,7 +95,6 @@ app.put('/activeUser',function(req,res){
 });
 
 app.post('/loginUser',function(req,res){
-//connection.query("SELECT * FROM cs_members where member_active_email=" :Email and member_password= :Pwd",{Email: req.body['username'], Pwd: md5(req.body['password'])},
   connection.query("SELECT * FROM cs_members where member_active_email='"+req.body['username']+ "' and member_password='"+ common.encrypt(req.body['password']) +"'",{},
     function(err, user) {
         if(user && user.length>0){
@@ -92,7 +103,7 @@ app.post('/loginUser',function(req,res){
           };
           var token = jwt.sign(tokenData, privateKey);
           req.session.accessToken = token;
-          res.status(200).json({'user' : user , 'token': token});
+          res.status(200).json({'user' : user[0] }); //, 'token': token
         }else{
           res.status(401).json({'message': 'Username or Password is incorrect' ,'code': 'Invalid Credentials'});
         }

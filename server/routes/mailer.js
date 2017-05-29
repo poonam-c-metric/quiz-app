@@ -4,7 +4,7 @@ var templatesDir = path.resolve(__dirname, '/templates/confirm-email/');
 var emailTemplates = require('email-templates');
 
 // Its not a good idea to provide your credentials like this, they should come from an external source. This is only for the demo.
-var EMAIL_ACCOUNT_USER = 'prg3690@gmail.com';
+var EMAIL_ACCOUNT_USER = 'poonam.gokani.0@gmail.com';
 var EMAIL_ACCOUNT_PASSWORD = 'poonam@2017'
 var YOUR_NAME = 'Poonam';
 

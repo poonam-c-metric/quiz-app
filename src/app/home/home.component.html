@@ -8,7 +8,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="stats">
-                            <a (click)="changeURL()">Create A New Program</a>
+                            <a [routerLink]="['/certificate/insert']">Create A New Program</a>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="card-footer">
                         <div class="stats">
                             <div class="col-lg-1 col-md-2 col-sm-2">
-                                <a [routerLink]="['/certificate',certdata.certificate_id]"><i class="material-icons">edit</i></a>
+                                <a [routerLink]="['/mainmenu',certdata.certificate_id]"><i class="material-icons">edit</i></a>
                             </div>
                             <div class="col-lg-1 col-md-2 col-sm-2">
                               <a data-toggle="modal" data-backdrop="false" href="#deleteCertificateModal" (click)="openDeleteCertificateModal(certdata.certificate_id,deleteCertificateModal)"><i class="material-icons">delete</i></a>

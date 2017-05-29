@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit {
 
     constructor(location:Location,private authenticationService : AuthenticationService, private router : Router , private toastyService : ToastyService) {
         this.location = location;
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'))[0];
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     }
 
     ngOnInit(){

@@ -13,7 +13,7 @@ export class UserComponent implements OnInit {
   user : User;
 
   constructor(private userService : UserService , private toastyService : ToastyService) {
-  	this.user = JSON.parse(localStorage.getItem('currentUser'))[0];
+  	this.user = JSON.parse(localStorage.getItem('currentUser'));
   }
 
   ngOnInit() {

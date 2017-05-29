@@ -106,3 +106,8 @@ my-app .main-panel .main-content .card{
 .modal-backdrop {
   z-index: -1;
 }
+.mainmenu{
+    height: 100px;
+    padding: 10px !important;
+    font-size: 25px;
+}
