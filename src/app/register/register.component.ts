@@ -15,7 +15,7 @@ export class RegisterComponent implements OnInit {
     public verified : any;
     public siteKey: string = "6Le8ySAUAAAAALcVLSQYoiiaw-7PTucjWgzmU84Y";
     public theme: string = "light";
-
+    public recaptchaResponse: string;
     constructor(
         private router: Router,
         private userService: UserService,
@@ -34,10 +34,13 @@ export class RegisterComponent implements OnInit {
 
     setVerified(data) {
         console.log(data) // data will return true while successfully verified
+      this.recaptchaResponse = data;
     }
 
+
     register(user) {
-        this.user.recaptcha = (<HTMLInputElement>document.getElementById("g-recaptcha-response")).value;
+        //this.user.recaptcha = (<HTMLInputElement>document.getElementById("g-recaptcha-response")).value;
+        this.user.recaptcha = this.recaptchaResponse;
         if(this.user.recaptcha === undefined || this.user.recaptcha === '' || this.user.recaptcha === null) {
           this.toastyService.warning({
               title: "Field Required",
@@ -48,6 +51,7 @@ export class RegisterComponent implements OnInit {
           });
         }else{
           console.log(this.user);
+          this.user.deviceType = 0;
           this.userService.create(this.user)
             .subscribe(
                 data => {
@@ -58,7 +62,7 @@ export class RegisterComponent implements OnInit {
                         timeout: 5000,
                         theme: "material"
                     });
-                    if (data.user && data.user[0].accessToken) {
+                    if (data.user && data.user.accessToken) {
                       localStorage.setItem('currentUser', JSON.stringify(data.user));
                     }
                     this.router.navigate(['/']);

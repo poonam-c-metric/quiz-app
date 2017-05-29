@@ -7,17 +7,18 @@ import { AuthGuard } from './_guards/index';
 import { CertificateComponent } from './certificate/certificate.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
-
+import { ContentComponent } from './content/content.component';
+import { MainmenuComponent } from './mainmenu/mainmenu.component';
 
 const appRoutes: Routes = [
     { path: '', component: DashboardComponent, canActivate: [AuthGuard]
      ,  children:[
         {
-         	path : 'certificate',
+         	path : 'certificate/insert',
          	component: CertificateComponent
         },
         {
-             path : 'certificate/:certificate_id',
+             path : 'certificate/update/:certificate_id',
              component: CertificateComponent
         },
         {
@@ -27,6 +28,14 @@ const appRoutes: Routes = [
         {
          	path : 'teachers',
          	component: UserComponent
+        },
+        {
+            path : 'section',
+            component: ContentComponent
+        },
+        {
+            path : 'mainmenu/:certificate_id',
+            component: MainmenuComponent
         }]
     },
     { path: 'login', component: LoginComponent },

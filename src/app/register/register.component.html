@@ -39,7 +39,8 @@
         </div>
 
         <div class="form-group">
-             <div class="g-recaptcha" (setVerified) = "setVerified($event)" googlerecaptcha [siteKey] = "siteKey" [theme] = 'theme' ></div>
+             <!--<div class="g-recaptcha" (setVerified) = "setVerified($event)" googlerecaptcha [siteKey] = "siteKey" [theme] = 'theme' ></div>-->
+             <re-captcha (resolved)="setVerified($event)" [siteKey]="siteKey"></re-captcha>
         </div>
         <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Register"/>

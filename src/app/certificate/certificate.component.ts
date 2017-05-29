@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Certificate } from '../_models/index';
 import { CertificateService } from '../_services/index'
-import {ToastyService, ToastyConfig} from 'ng2-toasty';
-import {ActivatedRoute} from '@angular/router';
+import { ToastyService, ToastyConfig } from 'ng2-toasty';
+import { ActivatedRoute , Router } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload';
 import { FileLikeObject } from 'ng2-file-upload';
+import { RequestOptions, Request, RequestMethod, Headers} from '@angular/http';
+
 
 @Component({
   selector: 'app-certificate',
@@ -21,8 +23,10 @@ export class CertificateComponent implements OnInit {
   public showAdvancedFlag : boolean = false;
   public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/upload', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
    maxFileSize: 10*1024*1024});
+  requests = [];
 
-  constructor(private certificateService : CertificateService , private toastyService : ToastyService , private route: ActivatedRoute)  {
+  constructor(private certificateService : CertificateService , private toastyService : ToastyService ,
+    private route: ActivatedRoute , private router:Router)  {
     this.certificateID = route.snapshot.params['certificate_id'];
     if(typeof this.certificateID != 'undefined'){
       this.getCertificateById(this.certificateID)
@@ -54,7 +58,7 @@ export class CertificateComponent implements OnInit {
 
   createCertificate(){
     if(this.certificateID!='' && this.certificateID!=undefined){
-      this.certificateData['id_edited'] = JSON.parse(localStorage.getItem('currentUser'))[0].member_id;
+      this.certificateData['id_edited'] = JSON.parse(localStorage.getItem('currentUser')).member_id;
       this.certificateData['is_active'] = 0;
       this.certificateService.updateCertificate(this.certificateData)
         .subscribe(

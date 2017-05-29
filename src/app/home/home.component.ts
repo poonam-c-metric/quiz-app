@@ -16,7 +16,8 @@ export class HomeComponent implements OnInit {
   certificateID : String;
 
   constructor(private certificateService : CertificateService , private router : Router , private toastyService:ToastyService) {
-  	this.currentUser = JSON.parse(localStorage.getItem('currentUser'))[0];
+  	this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    console.log(this.currentUser);
   }
 
   ngOnInit() {
@@ -33,10 +34,6 @@ export class HomeComponent implements OnInit {
           error => {
              console.log(error);
           });
-    }
-
-    changeURL(){
-      this.router.navigate(['/certificate']);
     }
 
     openDeleteCertificateModal(certid,dcmodal){

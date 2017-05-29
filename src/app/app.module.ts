@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { Directive } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
@@ -11,24 +12,24 @@ import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
-
 import { AuthGuard } from './_guards/index';
 import { AuthenticationService, UserService, CertificateService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-
-import {GoogleRecaptchaDirective} from '../../node_modules/angular2-google-recaptcha/directives/googlerecaptcha.directive';
+import { RecaptchaModule } from 'ng-recaptcha';
 
 import { CustomFormsModule } from '../../node_modules/ng2-validation/dist/index';
 import { ToastyModule } from 'ng2-toasty';
-import { ModalModule } from "ng2-modal";
+import { ModalModule } from "ngx-modal";
 import { CertificateComponent } from './certificate/certificate.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserComponent } from './user/user.component';
 import { UiSwitchModule } from 'ngx-ui-switch/src';
 import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
-import { DataTablesModule } from 'angular-datatables';
+import { ContentComponent } from './content/content.component';
+import { DataTableModule } from "angular2-datatable";
+import { MainmenuComponent } from './mainmenu/mainmenu.component';
 
 
 @NgModule({
@@ -37,24 +38,26 @@ import { DataTablesModule } from 'angular-datatables';
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
-    GoogleRecaptchaDirective,
     CertificateComponent,
     HomeComponent,
     NavbarComponent,
     UserComponent,
-    FileSelectDirective
+    FileSelectDirective,
+    ContentComponent,
+    MainmenuComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    DataTablesModule,
     routing,
     SidebarModule,
     CustomFormsModule,
     ModalModule,
     UiSwitchModule,
+    DataTableModule,
     ToastyModule.forRoot(),
+    RecaptchaModule.forRoot()
   ],
   providers: [
         AuthGuard,
@@ -65,4 +68,7 @@ import { DataTablesModule } from 'angular-datatables';
       ],
   bootstrap: [AppComponent]
 })
+
+
+
 export class AppModule { }
