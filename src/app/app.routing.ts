@@ -9,6 +9,11 @@ import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { ContentComponent } from './content/content.component';
 import { MainmenuComponent } from './mainmenu/mainmenu.component';
+import { ReportComponent } from './report/report.component';
+import { PreviewComponent } from './preview/preview.component';
+import { CommunityComponent } from './community/community.component';
+import { PublishComponent } from './publish/publish.component';
+import { QuestionComponent } from './question/question.component';
 
 const appRoutes: Routes = [
     { path: '', component: DashboardComponent, canActivate: [AuthGuard]
@@ -36,6 +41,25 @@ const appRoutes: Routes = [
         {
             path : 'mainmenu/:certificate_id',
             component: MainmenuComponent
+        },
+        {
+            path : 'report',
+            component: ReportComponent
+        },
+        {
+            path : 'previewtest',
+            component: PreviewComponent
+        },
+        {
+            path : 'community',
+            component: CommunityComponent
+        },
+        {
+            path : 'publish',
+            component: PublishComponent
+        },{
+            path : 'question',
+            component: QuestionComponent
         }]
     },
     { path: 'login', component: LoginComponent },
