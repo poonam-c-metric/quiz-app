@@ -13,7 +13,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
 import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService } from './_services/index';
+import { AuthenticationService, UserService, CertificateService, StudentService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
@@ -35,7 +35,8 @@ import { PreviewComponent } from './preview/preview.component';
 import { CommunityComponent } from './community/community.component';
 import { PublishComponent } from './publish/publish.component';
 import { QuestionComponent } from './question/question.component';
-
+import { StudentComponent } from './student/student.component';
+import { AddstudentComponent } from './addstudent/addstudent.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,9 @@ import { QuestionComponent } from './question/question.component';
     PreviewComponent,
     CommunityComponent,
     PublishComponent,
-    QuestionComponent
+    QuestionComponent,
+    StudentComponent,
+    AddstudentComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +77,7 @@ import { QuestionComponent } from './question/question.component';
         AuthenticationService,
         UserService,
         CertificateService,
+        StudentService,
         {provide: LocationStrategy, useClass: HashLocationStrategy}
       ],
   bootstrap: [AppComponent]

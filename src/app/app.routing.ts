@@ -14,6 +14,8 @@ import { PreviewComponent } from './preview/preview.component';
 import { CommunityComponent } from './community/community.component';
 import { PublishComponent } from './publish/publish.component';
 import { QuestionComponent } from './question/question.component';
+import { StudentComponent } from './student/student.component';
+import { AddstudentComponent } from './addstudent/addstudent.component';
 
 const appRoutes: Routes = [
     { path: '', component: DashboardComponent, canActivate: [AuthGuard]
@@ -60,6 +62,22 @@ const appRoutes: Routes = [
         },{
             path : 'question',
             component: QuestionComponent
+        },
+        {
+            path : 'students',
+            component: StudentComponent
+        },
+        {
+            path : 'students/add',
+            component: AddstudentComponent
+        },
+        {
+            path : 'students/edit/:student_id',
+            component: AddstudentComponent
+        },
+        {
+            path : 'students/delete/:student_del_id',
+            component: StudentComponent
         }]
     },
     { path: 'login', component: LoginComponent },

@@ -4,10 +4,10 @@ var cookieParser = require('cookie-parser');
 var moment = require('moment');
 var multer = require('multer');
 var router = express.Router();
-var connection = require('./connection.js');
-var mailer = require('./mailer.js');
+var connection = require('../connection.js');
+var mailer = require('../mailer.js');
 var jwt    = require('jsonwebtoken');
-var common = require('./common.js');
+var common = require('../common.js');
 
 var https = require('https');
 
@@ -31,7 +31,7 @@ app.use(router);
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
-console.log('in');
+
 app.post('/registerUser',function(req, res){
   if(req.body['deviceType']==0){
     console.log('Inside If');

@@ -1,0 +1,50 @@
+<div class="col-md-6 col-md-offset-3">
+    <h2>Add student</h2>
+    <form name="form" (ngSubmit)="f.form.valid && createStudent()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_first_name.valid }">
+            <label for="student_first_name">First Name:*</label>
+            <input type="text" class="form-control" name="student_first_name" [(ngModel)]="studentData.student_first_name" #student_first_name="ngModel" required />
+            <div *ngIf="f.submitted && !student_first_name.valid"  class="help-block">First Name is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_last_name.valid }">
+            <label for="student_last_name">Last Name:*</label>
+            <input type="text" class="form-control" name="student_last_name" [(ngModel)]="studentData.student_last_name" #student_last_name="ngModel" required />
+            <div *ngIf="f.submitted && !student_last_name.valid" class="help-block">Last Name is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_active_email.valid }">
+            <label for="student_active_email">Email Id *</label>
+            <input type="text" class="form-control" name="student_active_email" [(ngModel)]="studentData.student_active_email" [disabled]="studentData.student_id ? true : null" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" #student_active_email="ngModel" required>
+            <div *ngIf="f.submitted && student_active_email.errors && student_active_email.errors.required"  class="help-block">EmailId is required</div>
+            <div *ngIf="student_active_email.errors && student_active_email.errors.pattern" class="help-block">Not valid email!</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_password.valid}">
+            <label for="password">Password *</label>
+            <input type="password" class="form-control" name="student_password" [(ngModel)]="studentData.student_password" #student_password="ngModel" required [minlength]="8" [maxlength]="16"/>
+            <div *ngIf="f.submitted && student_password.hasError('required')" class="help-block">Password is required</div>
+            <div *ngIf="student_password.hasError('minlength') && student_password.dirty" class="help-block">Password must be at least 8 characters long.</div>
+        </div>
+
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_confirm_password.valid}">
+            <label for="student_confirm_password">Confirm Password *</label>
+            <input type="password" class="form-control" name="student_confirm_password" [(ngModel)]="studentData.student_password" #student_confirm_password="ngModel" required [minlength]="8" [maxlength]="16" [equalTo]="student_password"/>
+            <div *ngIf="f.submitted && student_confirm_password.hasError('required')" class="help-block">Confirm Password is required</div>
+            <div *ngIf="student_confirm_password.hasError('minlength') && student_confirm_password.dirty" class="help-block">Confirm Password must be at least 8 characters long.</div>
+            <br>
+            <div *ngIf="student_confirm_password.dirty && student_confirm_password.errors?.equalTo" class="help-block">Password and Confirm Password must match.</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="is_email_active">Send information to student:</label>
+            
+             <input tabindex="6" [(ngModel)]="studentData.is_email_active" name="is_email_active" type="checkbox" id="is_email_active" autocomplete="off" value="1" checked="true">
+        </div>
+       
+
+        <br>
+      
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+             <a [routerLink]="['/students']" class="btn btn-link">Cancel</a>
+        </div>
+    </form>
+</div>
