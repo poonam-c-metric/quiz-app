@@ -31,7 +31,7 @@ app.use(router);
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
-
+console.log('in');
 app.post('/registerUser',function(req, res){
   if(req.body['deviceType']==0){
     console.log('Inside If');
