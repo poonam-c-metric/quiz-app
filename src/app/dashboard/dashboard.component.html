@@ -1,4 +1,4 @@
-<div class="sidebar" data-color='red' data-image="">
+<div class="sidebar" data-color='red' data-image="" *ngIf="router.url!='/' && router.url.indexOf('mainmenu') < 1">
     <sidebar-cmp></sidebar-cmp>
     <div class="sidebar-background" style="background-image: url(../assets/img/sidebar-4.jpg)"></div>
 </div>

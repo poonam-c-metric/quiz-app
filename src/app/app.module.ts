@@ -30,6 +30,11 @@ import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import { ContentComponent } from './content/content.component';
 import { DataTableModule } from "angular2-datatable";
 import { MainmenuComponent } from './mainmenu/mainmenu.component';
+import { ReportComponent } from './report/report.component';
+import { PreviewComponent } from './preview/preview.component';
+import { CommunityComponent } from './community/community.component';
+import { PublishComponent } from './publish/publish.component';
+import { QuestionComponent } from './question/question.component';
 
 
 @NgModule({
@@ -44,7 +49,12 @@ import { MainmenuComponent } from './mainmenu/mainmenu.component';
     UserComponent,
     FileSelectDirective,
     ContentComponent,
-    MainmenuComponent
+    MainmenuComponent,
+    ReportComponent,
+    PreviewComponent,
+    CommunityComponent,
+    PublishComponent,
+    QuestionComponent
   ],
   imports: [
     BrowserModule,
