@@ -33,73 +33,108 @@ app.use(router);
 });
 
 
-app.get('/getCertificateDetails',function(req,res){
-  connection.query("SELECT * FROM cs_certificate where id_added=?" , [req.query.member_id] ,
+app.post('/getCertificateDetails',function(req,res){
+  if(req.body['member_id'] && req.body['member_id'].length > 0)
+  {
+  connection.query("SELECT * FROM cs_certificate where id_added=?" , [req.body.member_id] ,
       function(err, certdata) {
           if(certdata && certdata.length>0){
-            res.status(200).json({'certificate' : certdata });
+            res.status(200).json({'status':1,'message':'certificate','certificate' : certdata });
           }else{
-            res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+            res.status(401).json({'status':0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
           }
       })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 });
 
-app.get('/getCertificateById',function(req,res){
-  connection.query("SELECT * FROM cs_certificate where certificate_id=?" , [req.query.certificate_id] ,
+app.post('/getCertificateById',function(req,res){
+  if(req.body['certificate_id'] && req.body['certificate_id'].length > 0)
+  {
+  connection.query("SELECT * FROM cs_certificate where certificate_id=?" , [req.body.certificate_id] ,
       function(err, certdata) {
           if(certdata && certdata.length>0){
-            res.status(200).json({'certificate' : certdata });
+            res.status(200).json({'status':1,'message':'certificate','certificate' : certdata });
           }else{
-            res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+            res.status(401).json({'status':0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
           }
       })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 });
 
 app.post('/createCertificate',function(req, res){
-  req.body.date_added=moment().format('YYYY-MM-DD');
-  req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
-  connection.query('SELECT * FROM cs_certificate where certificate_name=?',req.body['certificate_name'],
-        function(err, rows) {
-            if (err) {
-              throw err;
-            }
-            else if(rows.length>0){
-              res.status(303).json({'message': 'Program name already exists. Please enter different certificate name.','code': 'Duplicate Entry'});
-            } else {
-              connection.query("INSERT INTO `cs_certificate` SET ?",req.body,function (err, results) {
-                 if (err) {
-                  res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-                 }else{
-                  res.status(200).json({'message': 'Certificate created Successfully' ,'code': 'SUCCESS'});
-                 }
-              });
-            }
-        });
+  if(req.body['certificate_name'] && req.body['certificate_name'].length > 0)
+  {
+    req.body.date_added=moment().format('YYYY-MM-DD');
+    req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
+    connection.query('SELECT * FROM cs_certificate where certificate_name=?',req.body['certificate_name'],
+          function(err, rows) {
+              if (err) {
+                throw err;
+              }
+              else if(rows.length>0){
+                res.status(303).json({'status':0,'message': 'Program name already exists. Please enter different certificate name.','code': 'Duplicate Entry'});
+              } else {
+                connection.query("INSERT INTO `cs_certificate` SET ?",req.body,function (err, results) {
+                   if (err) {
+                    res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+                   }else{
+                    res.status(200).json({'status':1,'message': 'Certificate created Successfully' ,'code': 'SUCCESS'});
+                   }
+                });
+              }
+          });
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
  });
 
-app.put('/updateCertificate',function(req, res){
+app.post('/updateCertificate',function(req, res){
+  if(req.body['certificate_name'] && req.body['certificate_name'].length > 0 && req.body['certificate_id'] && req.body['certificate_id'].length > 0)
+  {
   req.body.date_edited=moment().format('YYYY-MM-DD');
   req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
   connection.query("Update `cs_certificate` SET ? WHERE ?",[ req.body , { certificate_id : req.body.certificate_id }],function (err, results) {
      if (err) {
-      res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
+      res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
      }else{
       if(results.affectedRows)
-        res.status(200).json({'message': 'Certificate updated Successfully' ,'code': 'SUCCESS'});
+        res.status(200).json({'status':1,'message': 'Certificate updated Successfully' ,'code': 'SUCCESS'});
      }
   });
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 });
 
-app.delete('/deleteCertificateById',function(req,res){
+app.post('/deleteCertificateById',function(req,res){
     console.log(req.query.certificate_id);
-    connection.query("Delete FROM cs_certificate where certificate_id =?",req.query.certificate_id,function (err, results) {
-      if (err) {
-        res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-      }else{
-        if(results.affectedRows)
-          res.status(200).json({'message': 'Certificate deleted Successfully' ,'code': 'SUCCESS'});
-      }
-    });
+   if(req.body['certificate_id'] && req.body['certificate_id'].length > 0)
+   {
+      connection.query("Delete FROM cs_certificate where certificate_id =?",req.body.certificate_id,function (err, results) {
+        if (err) {
+          res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+        }else{
+          if(results.affectedRows)
+            res.status(200).json({'status':1,'message': 'Certificate deleted Successfully' ,'code': 'SUCCESS'});
+        }
+      });
+    }
+    else
+    {
+      res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+    }
   })
 
 /** File Upload coding **/
@@ -123,9 +158,9 @@ var upload = multer({ //multer settings
 app.post('/upload', function(req, res) {
   upload(req,res,function(err){
     if(err){
-      res.status(200).json({'message': err.message ,'code': 'FAIL'});
+      res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});
     }else{
-      res.status(200).json({'message':'File Uploaded Successfully','code': 'SUCCESS','filename': req.file.filename});
+      res.status(200).json({'status':1,'message':'File Uploaded Successfully','code': 'SUCCESS','filename': req.file.filename});
     }
 
   });
