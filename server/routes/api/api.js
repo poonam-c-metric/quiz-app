@@ -1,8 +1,6 @@
 var express = require('express');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
-var moment = require('moment');
-var multer = require('multer');
 var router = express.Router();
 var connection = require('../connection.js');
 var mailer = require('../mailer.js');
@@ -34,67 +32,80 @@ app.use(router);
 
 app.post('/registerUser',function(req, res){
   if(req.body['deviceType']==0){
-    console.log('Inside If');
     verifyRecaptcha(req.body["recaptcha"], function(success) {
       if (success) {
         delete req.body["recaptcha"];
         registerUser(req,res)
       }else{
-        res.status(303).json({'message': 'Captcha failed, sorry.','code': 'Captcha Failed'});
+        res.status(303).json({'status':0,'message': 'Captcha failed, sorry.','code': 'Captcha Failed'});
       }
     });
   }else{
-    console.log('Inside else');
     registerUser(req,res);
   }
 });
 
 function registerUser(req,res){
-  console.log(req.body['member_active_email']);
-  console.log(req.body);
   delete req.body["member_confirm_password"];
-  delete req.body["deviceType"];
-  req.body['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
-  req.body['last_login_ip'] = req.connection.remoteAddress.replace(/^.*:/, '');
-  req.body['member_password'] = common.encrypt(req.body['member_password']);
-  connection.query('SELECT * FROM cs_members where member_active_email=?',req.body['member_active_email'],
-    function(err, rows) {
-        if (err) {
-          throw err;
+  
+  if(req.body['member_active_email'] && req.body['member_active_email'].length > 0 && req.body['member_password'] && req.body['member_password'].length > 0
+     && req.body['member_first_name'] && req.body['member_first_name'].length > 0 && req.body['member_last_name'] && req.body['member_last_name'].length > 0)
+  {
+    req.body['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
+    req.body['last_login_ip'] = req.connection.remoteAddress.replace(/^.*:/, '');
+    req.body['member_password'] = common.encrypt(req.body['member_password']);
+    connection.query('SELECT * FROM cs_members where member_active_email=?',req.body['member_active_email'],
+      function(err, rows) {
+          if (err) {
+            throw err;
+          }
+          else if(rows.length>0){
+            res.status(303).json({'status':0,'message': 'User with this emailId already exists','code': 'User Exists'});
+          }else{
+            var tokenData = {
+                emailId: req.body.member_active_email
+            };
+            var token = jwt.sign(tokenData, privateKey);
+            req.body['accessToken'] = token;
+            connection.query("INSERT INTO `cs_members` SET ?",req.body,function (err, results) {
+             if (err) {
+              res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+             }else{
+              sendConfirmationEmail(req.body,results.insertId);
+              req.session.accessToken = token;
+              connection.query('SELECT * FROM cs_members where member_id=?',results.insertId,function(err1,resp1){
+                res.status(200).json({'status':1,'message':'Register successfully.','user':resp1[0]});
+              });
+             }
+          });
         }
-        else if(rows.length>0){
-          res.status(303).json({'message': 'User with this emailId already exists','code': 'User Exists'});
-        }else{
-          var tokenData = {
-              emailId: req.body.member_active_email
-          };
-          var token = jwt.sign(tokenData, privateKey);
-          req.body['accessToken'] = token;
-          connection.query("INSERT INTO `cs_members` SET ?",req.body,function (err, results) {
-           if (err) {
-            res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-           }else{
-            sendConfirmationEmail(req.body,results.insertId);
-            req.session.accessToken = token;
-            connection.query('SELECT * FROM cs_members where member_id=?',results.insertId,function(err1,resp1){
-              res.status(200).json({'user':resp1[0]});
-            });
-           }
-        });
-      }
-    });
+      });
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 }
-app.put('/activeUser',function(req,res){
-  connection.query('UPDATE cs_members SET ? WHERE ?', [{ is_email_active: 1 }, { member_id: req.body["userId"] }],function(err , result){
-     if (err) {
-      res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-     }else{
-      res.status(200).json({'affectedRows':result.changedRows});
-     }
-  });
+app.post('/activeUser',function(req,res){
+  if(req.body['userId'] && req.body['userId'].length > 0)
+  {
+    connection.query('UPDATE cs_members SET ? WHERE ?', [{ is_email_active: 1 }, { member_id: req.body["userId"] }],function(err , result){
+       if (err) {
+        res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+       }else{
+        res.status(200).json({'status':1,'message':'Activated successfully.','affectedRows':result.changedRows});
+       }
+    });
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 });
 
 app.post('/loginUser',function(req,res){
+if(req.body['username'] && req.body['username'].length > 0 && req.body['password'] && req.body['password'].length > 0)
+{
   connection.query("SELECT * FROM cs_members where member_active_email='"+req.body['username']+ "' and member_password='"+ common.encrypt(req.body['password']) +"'",{},
     function(err, user) {
         if(user && user.length>0){
@@ -103,141 +114,62 @@ app.post('/loginUser',function(req,res){
           };
           var token = jwt.sign(tokenData, privateKey);
           req.session.accessToken = token;
-          res.status(200).json({'user' : user[0] }); //, 'token': token
+          res.status(200).json({'status':1, 'message':"Login successfully",'user' : user[0] }); //, 'token': token
         }else{
-          res.status(401).json({'message': 'Username or Password is incorrect' ,'code': 'Invalid Credentials'});
+          res.status(401).json({'status':0,'message': 'Username or Password is incorrect' ,'code': 'Invalid Credentials'});
         }
     })
+}
+else
+{
+  res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+}
 });
 
 
 app.get('/logoutUser',function(req,res){
   req.session.destroy();
-  res.status(200).json({'message': 'Successfully Logout' ,'code': 'Success Logout'});;
+  res.status(200).json({'status':1,'message': 'Successfully Logout' ,'code': 'Success Logout'});;
 });
 
 app.post('/resetPassword',function(req,res){
+  if(req.body['emailId'] && req.body['emailId'].length > 0)
+  {
   connection.query("SELECT * FROM cs_members where member_active_email='"+req.body['emailId']+"'",{},
     function(err, user) {
         if(user && user.length>0){
           sendResetPasswordMail(user[0]);
-          res.status(200).json({'message' : 'Mail sent Successfully' , 'code' : 'SUCCESS'});
+          res.status(200).json({'status':1,'message' : 'Mail sent Successfully' , 'code' : 'SUCCESS'});
         }else{
-          res.status(401).json({'message': 'Email address or username does not exist.' ,'code': 'Invalid EmailID'});
+          res.status(401).json({'status':1,'message': 'Email address or username does not exist.' ,'code': 'Invalid EmailID'});
         }
     })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 })
 
-app.put('/updateUser',function(req,res){
-  connection.query('UPDATE cs_members SET ? WHERE ?', [req.body['userdata'], { member_id: req.body["userdata"]["member_id"] }],function(err , result){
-     if (err) {
-      connection.query('SELECT * FROM cs_members where member_id=?',req.body["userdata"]["member_id"],function(err1,resp1){
-      });
-      res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-     }else{
-        res.status(200).json({'message': 'User updated successfully.','code': 'Updated'});
-     }
-  });
-})
-
-
-app.get('/getCertificateDetails',function(req,res){
-  connection.query("SELECT * FROM cs_certificate where id_added=?" , [req.query.member_id] ,
-      function(err, certdata) {
-          if(certdata && certdata.length>0){
-            res.status(200).json({'certificate' : certdata });
-          }else{
-            res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
-          }
-      })
-});
-
-app.get('/getCertificateById',function(req,res){
-  connection.query("SELECT * FROM cs_certificate where certificate_id=?" , [req.query.certificate_id] ,
-      function(err, certdata) {
-          if(certdata && certdata.length>0){
-            res.status(200).json({'certificate' : certdata });
-          }else{
-            res.status(401).json({'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
-          }
-      })
-});
-
-app.post('/createCertificate',function(req, res){
-  req.body.date_added=moment().format('YYYY-MM-DD');
-  req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
-  connection.query('SELECT * FROM cs_certificate where certificate_name=?',req.body['certificate_name'],
-        function(err, rows) {
-            if (err) {
-              throw err;
-            }
-            else if(rows.length>0){
-              res.status(303).json({'message': 'Program name already exists. Please enter different certificate name.','code': 'Duplicate Entry'});
-            } else {
-              connection.query("INSERT INTO `cs_certificate` SET ?",req.body,function (err, results) {
-                 if (err) {
-                  res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-                 }else{
-                  res.status(200).json({'message': 'Certificate created Successfully' ,'code': 'SUCCESS'});
-                 }
-              });
-            }
+app.post('/updateUser',function(req,res){
+  if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].length > 0 
+     && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].length > 0 && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].length > 0)
+  {
+    connection.query('UPDATE cs_members SET ? WHERE ?', [req.body['userdata'], { member_id: req.body["userdata"]["member_id"] }],function(err , result){
+       if (err) {
+        connection.query('SELECT * FROM cs_members where member_id=?',req.body["userdata"]["member_id"],function(err1,resp1){
         });
- });
-
-app.put('/updateCertificate',function(req, res){
-  req.body.date_edited=moment().format('YYYY-MM-DD');
-  req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
-  connection.query("Update `cs_certificate` SET ? WHERE ?",[ req.body , { certificate_id : req.body.certificate_id }],function (err, results) {
-     if (err) {
-      res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-     }else{
-      if(results.affectedRows)
-        res.status(200).json({'message': 'Certificate updated Successfully' ,'code': 'SUCCESS'});
-     }
-  });
-});
-
-app.delete('/deleteCertificateById',function(req,res){
-    console.log(req.query.certificate_id);
-    connection.query("Delete FROM cs_certificate where certificate_id =?",req.query.certificate_id,function (err, results) {
-      if (err) {
-        res.status(303).json({'message': err.message.split(":")[1],'code': err.code});
-      }else{
-        if(results.affectedRows)
-          res.status(200).json({'message': 'Certificate deleted Successfully' ,'code': 'SUCCESS'});
-      }
+        res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+       }else{
+          res.status(200).json({'status':1,'message': 'User updated successfully.','code': 'Updated'});
+       }
     });
-  })
-
-/** File Upload coding **/
-
-var storage = multer.diskStorage({ //multers disk storage settings
-    destination: function (req, file, cb) {
-        cb(null, './src/uploads/');
-    },
-    filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.originalname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
-    }
-});
-
-var upload = multer({ //multer settings
-    storage: storage
-  }).single('file');
-
-
-/** API path that will upload the files */
-app.post('/upload', function(req, res) {
-  upload(req,res,function(err){
-    if(err){
-      res.status(200).json({'message': err.message ,'code': 'FAIL'});
-    }else{
-      res.status(200).json({'message':'File Uploaded Successfully','code': 'SUCCESS','filename': req.file.filename});
-    }
-
-  });
-});
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+})
 
 
 // Helper function to make API call to recatpcha and check response
