@@ -31,8 +31,12 @@ app.use(router);
   next();
 });
 
-/*Student insert*/
 
+/*
+  Author : Niral Patel
+  Desc   : Create student
+  Date   :30/6/2016
+ */
 app.post('/createStudent',function(req, res){
   
     
@@ -78,12 +82,16 @@ app.post('/createStudent',function(req, res){
     }
  
 });
-
+/*
+  Author : Niral Patel
+  Desc   : Get student data
+  Date   :30/6/2016
+ */
 
  app.get('/getStudentDetails',function(req,res){
-  if(req.query['member_id'] && req.query['member_id'].trim() != '')
+  if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
   {
-  connection.query("SELECT * FROM cs_students where id_added=?" , [req.query.member_id] ,
+  connection.query("SELECT * FROM cs_students where certificate_id=?" , [req.query.certificate_id] ,
       function(err, studata) {
           if(studata && studata.length>0){
             res.status(200).json({"status":1,'message':'student details','student' : studata });
@@ -98,6 +106,11 @@ app.post('/createStudent',function(req, res){
   }
 });
 
+/*
+  Author : Niral Patel
+  Desc   : Get student by id
+  Date   :31/6/2016
+ */
 app.get('/getStudentById',function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
   {
@@ -117,10 +130,13 @@ app.get('/getStudentById',function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 });
+/*
+  Author : Niral Patel
+  Desc   : Update student detail
+  Date   :31/6/2016
+ */
 app.post('/updateStudent',function(req, res){
   delete req.body["student_confirm_password"];
-  //delete req.body["is_email_active"];
-  //console.log(req.body);
    if(req.body['student_id'] && req.body['student_id'].trim() != '' && req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
    {
@@ -152,6 +168,11 @@ app.post('/updateStudent',function(req, res){
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
 });
+/*
+  Author : Niral Patel
+  Desc   : Delete student
+  Date   :31/6/2016
+ */
 app.get('/deleteStudent',function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
   {
@@ -170,7 +191,11 @@ app.get('/deleteStudent',function(req,res){
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
 });
-
+/*
+  Author : Niral Patel
+  Desc   : send confirmation mail
+  Date   :31/6/2016
+ */
 function sendStudentConfirmationEmail(req,userid){
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = req.student_active_email;
