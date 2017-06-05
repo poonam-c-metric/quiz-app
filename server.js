@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const api = require('./server/routes/api/api');
 const certificateApi = require('./server/routes/api/certificate');
 const studentApi = require('./server/routes/api/student');
+const contentApi = require('./server/routes/api/content');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/api', api);
 app.use('/api', certificateApi);
 app.use('/api', studentApi);
+app.use('/api/content', contentApi);
 
 // Catch all other routes and return the index file
 app.get('/', (req, res) => {

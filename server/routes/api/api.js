@@ -29,7 +29,11 @@ app.use(router);
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
-
+/*
+  Author : Poonam Gokani
+  Desc   : Register and login api
+  Date   :29/5/2016
+ */
 app.post('/registerUser',function(req, res){
   if(req.body['deviceType']==0){
     verifyRecaptcha(req.body["recaptcha"], function(success) {
@@ -132,7 +136,11 @@ app.get('/logoutUser',function(req,res){
   req.session.destroy();
   res.status(200).json({'status':1,'message': 'Successfully Logout' ,'code': 'Success Logout'});;
 });
-
+/*
+  Author : Niral Patel
+  Desc   : Rest password
+  Date   :1/6/2016
+ */
 app.post('/resetPassword',function(req,res){
   if(req.body['emailId'] && req.body['emailId'].trim() != '')
   {
@@ -151,7 +159,12 @@ app.post('/resetPassword',function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
-/*Update user*/
+/*
+  Author : Poonam Gokani
+  Desc   : Update user
+  Date   :29/5/2016
+ */
+
 app.post('/updateUser',function(req,res){
   if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != '' 
      && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].trim() != '' && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].trim() != '')
@@ -171,7 +184,12 @@ app.post('/updateUser',function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
-/*update reset password*/
+
+/*
+  Author : Niral Patel
+  Desc   : update reset password
+  Date   :1/6/2016
+ */
 app.post('/updateResetPassword',function(req,res){
   if(req.body['accessToken'] && req.body['accessToken'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
   {
@@ -198,7 +216,11 @@ app.post('/updateResetPassword',function(req,res){
   }
 })
 
-/*change password*/
+/*
+  Author : Niral Patel
+  Desc   : Change password
+  Date   :1/6/2016
+ */
 app.post('/changePassword',function(req,res){
   if(req.body['member_id'] && req.body['member_id'].trim() != '' && req.body['member_old_password'] && req.body['member_old_password'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
   {
@@ -247,6 +269,11 @@ function verifyRecaptcha(key, callback) {
           });
   });
 }
+/*
+  Author : Poonam Gokani
+  Desc   : send confirmatiom
+  Date   :29/5/2016
+ */
 
 function sendConfirmationEmail(req,userid){
   var FROM_ADDRESS = 'support@Certspring.com';
@@ -274,7 +301,11 @@ function sendConfirmationEmail(req,userid){
     res.send('Email sent: ' + success);
   });
 }
-/*Set forgot password mail*/
+/*
+  Author : Niral Patel
+  Desc   : Send reset password mail
+  Date   :1/6/2016
+ */
 
 function sendResetPasswordMail(user){
   
@@ -296,7 +327,12 @@ function sendResetPasswordMail(user){
     res.send('Email sent: ' + success);
   });
 }
-/*send updated forgotpassword*/
+/*
+  Author : Niral Patel
+  Desc   : send updated forgotpassword
+  Date   :1/6/2016
+ */
+
 function sendUpdateResetPasswordMail(user){
   
   var FROM_ADDRESS = 'support@Certspring.com';
