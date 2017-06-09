@@ -10,6 +10,8 @@ const api = require('./server/routes/api/api');
 const certificateApi = require('./server/routes/api/certificate');
 const studentApi = require('./server/routes/api/student');
 const contentApi = require('./server/routes/api/content');
+const questionApi = require('./server/routes/api/question');
+
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use('/api', api);
 app.use('/api', certificateApi);
 app.use('/api', studentApi);
 app.use('/api/content', contentApi);
+app.use('/api/question', questionApi);
 
 // Catch all other routes and return the index file
 app.get('/', (req, res) => {

@@ -35,7 +35,7 @@ app.use(router);
 
 app.get('/getCertificateDetails',function(req,res){
   if(req.query.member_id && req.query.member_id!= ''){
-    connection.query("SELECT * FROM cs_certificate where id_added=?" , [req.query.member_id] ,
+    connection.query("SELECT * FROM cs_certificate where is_delete = 0 and id_added=?" , [req.query.member_id] ,
       function(err, certdata) {
           if(certdata && certdata.length>0){
             res.status(200).json({'status':1,'message':'certificate','certificate' : certdata });
@@ -115,9 +115,11 @@ app.post('/updateCertificate',function(req, res){
   }
 });
 
-app.delete('/deleteCertificateById',function(req,res){
+app.get('/deleteCertificateById',function(req,res){
   if(req.query.certificate_id && req.query.certificate_id != ''){
-    connection.query("Delete FROM cs_certificate where certificate_id =?",req.query.certificate_id,function (err, results) {
+     var status = {"is_delete": '1'};
+     connection.query("Update `cs_certificate` SET ? WHERE ?",[ status , { certificate_id : req.query.certificate_id }],
+      function (err, results) {
       if (err) {
         res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
       }else{

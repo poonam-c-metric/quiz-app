@@ -89,7 +89,7 @@ app.post('/createStudent',function(req, res){
  app.get('/getStudentDetails',function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
   {
-    connection.query("SELECT * FROM cs_students where certificate_id=?" , [req.query.certificate_id] ,
+  connection.query("SELECT * FROM cs_students where is_delete = 0 and certificate_id=?" , [req.query.certificate_id] ,
       function(err, studata) {
           if(studata && studata.length>0){
             res.status(200).json({"status":1,'message':'student details','student' : studata });
@@ -174,7 +174,9 @@ app.post('/updateStudent',function(req, res){
 app.get('/deleteStudent',function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
   {
-  connection.query("Delete from cs_students where student_id=?" , [req.query['student_id']] ,
+ // connection.query("Delete from cs_students where student_id=?" , [req.query['student_id']] ,
+  var status = {"is_delete": '1'};
+  connection.query("Update `cs_students` SET ? WHERE ?",[ status , { student_id : req.query.student_id }],
       function(err, results) {
           if(err){
             res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
