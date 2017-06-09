@@ -1,16 +1,15 @@
-<div class="logo">
+<!--<div class="logo">
     <a class="simple-text">
         <div class="logo-img">
             <img src="/assets/img/angular2-logo-red.png"/>
         </div>
         CertSpring
     </a>
-</div>
-<div class="sidebar-wrapper">
+</div> -->
+<!--<div class="sidebar-wrapper">
     <div class="nav-container">
         <ul class="nav">
             <li *ngFor="let menuItem of menuItems" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: true}"
             [class.active]="router.url===menuItem.path">
                 <a [routerLink]="[menuItem.path]">
                     <i class="material-icons">{{menuItem.icon}}</i>
@@ -18,5 +17,84 @@
                 </a>
             </li>
         </ul>
+    </div>
+</div> -->
+<!--
+<div class="sidebar-wrapper">
+    <div class="nav-container">
+        <ul class="nav">
+            <li routerLinkActive="active">
+                <a [routerLink]="['/dashboard']">
+                    <i class="material-icons">dashboard</i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li routerLinkActive="active">
+                <a [routerLink]="['/certificate']">
+                    <i class="material-icons">book</i>
+                    <p>Certificate</p>
+                </a>
+            </li>
+            <li routerLinkActive="active">
+                <a [routerLink]="['/section']">
+                    <i class="material-icons">content_paste</i>
+                    <p>Content</p>
+                </a>
+            </li>
+            <li routerLinkActive="active">
+                <a [routerLink]="['/question']">
+                    <i class="fa fa-question"></i>
+                    <p>Question</p>
+                </a>
+            </li>
+             <li routerLinkActive="active">
+                <a [routerLink]="['/students']">
+                    <i class="material-icons">person</i>
+                    <p>Student</p>
+                </a>
+            </li>
+             <li routerLinkActive="active">
+                <a [routerLink]="['/community']">
+                    <i class="fa fa-users"></i>
+                    <p>Community</p>
+                </a>
+            </li>
+             <li routerLinkActive="active">
+                <a [routerLink]="['/previewtest']">
+                    <i class="fa fa-eye"></i>
+                    <p>Preview</p>
+                </a>
+            </li>
+             <li routerLinkActive="active">
+                <a [routerLink]="['/publish']">
+                    <i class="material-icons">publish</i>
+                    <p>Publish</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+-->
+<div class="sidebar-wrapper">
+    <div class="nav-container">
+        <div id="MainMenu" class="nav">
+            <div class="list-group panel">
+              <a class="list-group-item" data-parent="#MainMenu" (click)="getCertificateId('/dashboard',$event)" routerLinkActive="active">Dashboard</a>
+              <a class="list-group-item" data-toggle="collapse" data-parent="#MainMenu" href="#certificate">Certificate<i class="fa fa-caret-down"></i></a>
+              <div class="collapse list-group-submenu" id="certificate">
+                <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/certificate/update',$event)" routerLinkActive="active">Certificate</a>
+                <a href="#content" class="list-group-item" data-toggle="collapse" data-parent="#certificate">Content <i class="fa fa-caret-down"></i></a>
+                    <div class="collapse list-group-submenu" id="content">
+                         <a class="list-group-item" data-parent="#content" (click)="getCertificateId('/content',$event)" routerLinkActive="active">Content</a>
+                        <a class="list-group-item" data-parent="#content" (click)="getCertificateId('/question',$event)" id="question" routerLinkActive="active">Questions</a>
+                    </div>
+                <a class="list-group-item" data-parent="#certificate" routerLinkActive="active" (click)="getCertificateId('/students',$event)">Students</a>
+                <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/report',$event)" routerLinkActive="active">Reports</a>
+                <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/previewtest',$event)" routerLinkActive="active">Preview</a>
+                <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/community',$event)" routerLinkActive="active">Community</a>
+                <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/publish',$event)" routerLinkActive="active">Publish</a>
+              </div>
+            </div>
+        </div>
     </div>
 </div>

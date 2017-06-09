@@ -3,7 +3,7 @@ var mysql = require('mysql')
 var client = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'root',
   database: 'certspring',
   dateStrings: 'date'
 })

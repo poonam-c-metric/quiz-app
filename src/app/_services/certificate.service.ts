@@ -28,7 +28,7 @@ export class CertificateService {
 
   updateCertificate(certdata : Certificate){
     console.log("Inside Update Certificate Service"+JSON.stringify(certdata));
-    return this.http.put('/api/updateCertificate', certdata, this.jwt())
+    return this.http.post('/api/updateCertificate', certdata, this.jwt())
     .map((response: Response) => {
         let data = response.json();
         return data;

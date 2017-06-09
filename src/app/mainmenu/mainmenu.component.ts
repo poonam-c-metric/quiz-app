@@ -11,6 +11,7 @@ export class MainmenuComponent implements OnInit {
   public certificateID ;
   constructor(private route: ActivatedRoute) {
   	this.certificateID = route.snapshot.params['certificate_id'];
+  	localStorage.setItem('certificate_id',this.certificateID);
   }
 
   ngOnInit() {

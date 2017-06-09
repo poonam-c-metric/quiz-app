@@ -1,59 +1,44 @@
-<div class="container-fluid">
-    <div class="col-xs-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
-        <div class="row">
-            <h2 class="col-xs-6">Simple data table</h2>
-            <div class="col-xs-2">
-                <label class="label-control">Rows on page</label>
-                <select class="form-control input-sm" [(ngModel)]="rowsOnPage">
-                    <option [ngValue]="5">5</option>
-                    <option [ngValue]="10">10</option>
-                    <option [ngValue]="15">15</option>
-                </select>
-            </div>
-            <div class="col-xs-4">
-                <div class="row">
-                    <label class="col-xs-12 label-control">Sort by</label>
-                </div>
-                <div class="col-xs-6">
-                    <div class="row">
-                        <select class="form-control input-sm" [(ngModel)]="sortBy">
-                            <option ngValue="name">Name</option>
-                            <option ngValue="email">Email</option>
-                            <option ngValue="age">Age</option>
-                            <option [ngValue]="sortByWordLength">City</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="row">
-                        <select class="form-control input-sm" [(ngModel)]="sortOrder">
-                            <option ngValue="asc">Ascending</option>
-                            <option ngValue="desc">Descending</option>
-                            <option ngValue="badValue">Bad value</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">User information</div>
+<div class="col-lg-12">
+    &nbsp;
+</div>
+<div class="col-lg-12">
+    &nbsp;
+</div>
+<div class="row">
+<div class="col-md-12">
+    <span style="float:right;">
+         <a [routerLink]="['/content/insert']" class="btn btn-cs">Add New</a>
+    </span>
+</div>
+</div>
+<div class="col-md-12">
+    &nbsp;
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive" style="padding:15px 0;">
+        <select class="chzn-select chzn-done" style="font-size:16px;margin-left:3px;" name="bullkaction" id="bulkaction">
+            <option value="">Select</option>
+            <option value="copy">Copy</option>
+            <option value="delete">Delete</option>
+        </select>
+        <input type="submit" name="button" id="apply" value="Apply" class="btn btn-cs" style="padding-top:0px;padding-bottom:0px;">
 
-            <table class="table table-striped" [mfData]="data" #mf="mfDataTable"
+        <div class="panel panel-default">
+            <div class="panel-heading">Student Information</div>
+            <table class="table table-striped" [mfData]="contentlistData | dataFilter : filterQuery" #mf="mfDataTable"
                    [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder">
                 <thead>
                 <tr>
-                    <th style="width: 10%"></th>
                     <th style="width: 20%">
-                        <mfDefaultSorter by="name">Name</mfDefaultSorter>
+                        <mfDefaultSorter by="content">Content</mfDefaultSorter>
                     </th>
                     <th style="width: 40%">
-                        <mfDefaultSorter by="email">Email</mfDefaultSorter>
+                        <mfDefaultSorter by="questions">Questions</mfDefaultSorter>
                     </th>
                     <th style="width: 10%">
-                        <mfDefaultSorter by="age">Age</mfDefaultSorter>
+                        <mfDefaultSorter>Testing</mfDefaultSorter>
                     </th>
-                    <th style="width: 20%">
-                        <mfDefaultSorter [by]="sortByWordLength">City</mfDefaultSorter>
+                    <th style="width: 20%"> Edit Content
                     </th>
                 </tr>
                 <tr>
@@ -65,13 +50,13 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let item of mf.data">
+                    <td>{{item.resource_name}}</td>
+                    <td>1</td>
+                    <td class="text-right"><a [routerLink]="['/question']">Manage Test</a></td>
                     <td>
-                        <button (click)="remove(item)" class="btn btn-danger">x</button>
+                        <a class="btn btn-small btn-warning btn-sm" [routerLink]="['/content/edit',item.resource_id]"><i class="fa fa-pencil" title="Update"></i></a>
+                        <a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteContentModal" (click)="openDeleteContentModal(item.resource_id,deleteContentModal)"><i class="material-icons">delete</i></a>
                     </td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.email}}</td>
-                    <td class="text-right">{{item.age}}</td>
-                    <td>{{item.city | uppercase}}</td>
                 </tr>
                 </tbody>
                 <tfoot>
@@ -85,3 +70,9 @@
         </div>
     </div>
 </div>
+
+<modal #deleteContentModal title="Confirm Delete?" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="deleteContent(contentDeleteID,contentDeleteModal)">
+    <modal-content>
+        Are you sure to delete this record permanently?
+    </modal-content>
+</modal>

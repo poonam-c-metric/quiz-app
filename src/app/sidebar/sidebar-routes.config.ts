@@ -1,7 +1,8 @@
 import {  RouteInfo } from './sidebar.metadata';
 
+
 export const ROUTES: RouteInfo[] = [
-    { path: '/certificate', title: 'Certificate',  icon:'library_books', class: '' },
+    { path: '/certificate/update/', title: 'Certificate',  icon:'library_books', class: '' },
     { path: '/section', title: 'Content',  icon:'content_paste', class: '' },
     { path: '/students', title: 'Students',  icon:'person', class: '' },
     { path: '/question', title: 'Questions',  icon:'library_books', class: '' },

@@ -38,8 +38,6 @@ app.use(router);
   Date   :30/6/2016
  */
 app.post('/createStudent',function(req, res){
-  
-    
       delete req.body["student_confirm_password"];
        if(req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
@@ -80,7 +78,7 @@ app.post('/createStudent',function(req, res){
     {
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
- 
+
 });
 /*
   Author : Niral Patel
@@ -91,12 +89,12 @@ app.post('/createStudent',function(req, res){
  app.get('/getStudentDetails',function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
   {
-  connection.query("SELECT * FROM cs_students where certificate_id=?" , [req.query.certificate_id] ,
+    connection.query("SELECT * FROM cs_students where certificate_id=?" , [req.query.certificate_id] ,
       function(err, studata) {
           if(studata && studata.length>0){
             res.status(200).json({"status":1,'message':'student details','student' : studata });
           }else{
-            res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+            res.status(200).json({"status":0,'message': 'Students details not found' ,'code': 'No Data'});
           }
       })
   }
@@ -116,7 +114,7 @@ app.get('/getStudentById',function(req,res){
   {
   connection.query("SELECT * FROM cs_students where student_id=?" , [req.query['student_id']] ,
       function(err, studata) {
-        
+
           if(studata && studata.length>0){
             studata[0].student_password = common.decrypt(studata[0].student_password);
             res.status(200).json({"status":1,'message':'student data','student' : studata });
@@ -137,7 +135,7 @@ app.get('/getStudentById',function(req,res){
  */
 app.post('/updateStudent',function(req, res){
   delete req.body["student_confirm_password"];
-   if(req.body['student_id'] && req.body['student_id'].trim() != '' && req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
+   if(req.body['student_id'] && req.body['student_id'] != '' && req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
    {
       req.body['student_password'] = common.encrypt(req.body['student_password']);
@@ -182,7 +180,7 @@ app.get('/deleteStudent',function(req,res){
             res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
           }else{
             res.status(200).json({"status":1,'message': 'Student deleted Successfully' ,'code': 'SUCCESS'});
-            
+
           }
       })
     }
@@ -213,7 +211,7 @@ function sendStudentConfirmationEmail(req,userid){
   "<br><br>Best regards,<br>" +
   "The Certspring Team<br>" +
   "support@Certspring.com";
-  
+
   console.log(html);
 
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){

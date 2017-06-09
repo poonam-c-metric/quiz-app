@@ -53,7 +53,7 @@
                 <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="course" /> Course
                 <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="catalog" /> Catalog
             </div>
-            <div class="form-group" *ngIf="certificateData.certificate_mode=='catalog'">
+            <div class="form-group" *ngIf="certificateData.certificate_mode==='catalog'">
                 <label for="passingscore">Passing Score:</label>
                 <input type="text" class="form-control" name="points" [(ngModel)]="certificateData.points" #points="ngModel" number/>
                 <div *ngIf="points.errors?.number" class="help-block">Passing score only contains numeric value.</div>
@@ -74,7 +74,7 @@
         <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Save"/>
             <a *ngIf="router.url=='/certificate/insert'" [routerLink]="['/']" class="btn btn-link">Cancel</a>
-            <a *ngIf="router.url!='/certificate/insert'" [routerLink]="['/mainmenu',certificateID]" class="btn btn-link">Cancel</a>
+            <a *ngIf="router.url!='/certificate/insert'" [routerLink]="['/']" class="btn btn-link">Cancel</a>
         </div>
     </form>
 </div>

@@ -17,7 +17,7 @@ export class CertificateComponent implements OnInit {
 
   //certificateData : Certificate = {};
   certificateData : any = {};
-  certificateID : String;
+  certificateID : string;
   public errorMessage : String;
   public ecommerce : number;
   public showAdvancedFlag : boolean = false;
@@ -29,13 +29,18 @@ export class CertificateComponent implements OnInit {
     private route: ActivatedRoute , private router:Router)  {
     this.certificateID = route.snapshot.params['certificate_id'];
     if(typeof this.certificateID != 'undefined'){
+      localStorage.setItem('certificate_id',this.certificateID);
+      this.getCertificateById(this.certificateID)
+    }else if(this.router.url.includes('certificate/insert')){
+      localStorage.removeItem('certificate_id')
+    } else {
+      this.certificateID = localStorage.getItem('certificate_id');
       this.getCertificateById(this.certificateID)
     }
   }
 
   ngOnInit() {
     this.uploader.onWhenAddingFileFailed = (item, filter, options) => this.onWhenAddingFileFailed(item, filter, options);
-
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
       let res = JSON.parse(response);
       this.certificateData.certificate_logo = res.filename;
@@ -53,6 +58,13 @@ export class CertificateComponent implements OnInit {
         },
         error => {
             let err = error.json();
+            this.toastyService.error({
+              title: err.code,
+              msg: err.message,
+              showClose: true,
+              timeout: 5000,
+              theme: "material"
+            });
         });
   }
 
@@ -63,13 +75,14 @@ export class CertificateComponent implements OnInit {
       this.certificateService.updateCertificate(this.certificateData)
         .subscribe(
           data => {
-              this.toastyService.success({
-                  title: "Success",
-                  msg: "Certificate updated successfully",
-                  showClose: true,
-                  timeout: 5000,
-                  theme: "material"
-              });
+            this.toastyService.success({
+                title: "Success",
+                msg: "Certificate updated successfully",
+                showClose: true,
+                timeout: 5000,
+                theme: "material"
+            });
+            this.router.navigate(['/']);
           },
           error => {
               let err = error.json();
@@ -79,10 +92,10 @@ export class CertificateComponent implements OnInit {
                 showClose: true,
                 timeout: 5000,
                 theme: "material"
-            });
+              });
           });
     }else{
-      this.certificateData['id_added'] = JSON.parse(localStorage.getItem('currentUser'))[0].member_id;
+      this.certificateData['id_added'] = JSON.parse(localStorage.getItem('currentUser')).member_id;
       this.certificateData['is_active'] = 0;
       console.log(this.certificateData);
       this.certificateService.createCertificate(this.certificateData)
@@ -95,6 +108,7 @@ export class CertificateComponent implements OnInit {
                   timeout: 5000,
                   theme: "material"
               });
+              this.router.navigate(['/']);
           },
           error => {
               let err = error.json();

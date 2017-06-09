@@ -39,6 +39,22 @@ export class UserService {
             })
     }
 
+    resetNewPassword(password : String , accessToken : String){
+        return this.http.post('/api/updateResetPassword',{member_password: password , accessToken:accessToken})
+            .map((response: Response) => {
+                let data = response.json();
+                return data;
+            })
+    }
+
+    updatePassword(pwddetails : Object){
+        return this.http.post('/api/changePassword', pwddetails)
+            .map((response: Response) => {
+                let data = response.json();
+                return data;
+            })
+    }
+
     updateUserData(userdetails : Object){
         return this.http.put('/api/updateUser',{ userdata: userdetails })
             .map((response: Response) => {

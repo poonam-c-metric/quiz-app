@@ -21,13 +21,11 @@
     </form>
 </div>
 
-<modal #forgetPasswordModal title="Forgot Password?" cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && resetPassword(emailid.value)">
+<modal #forgetPasswordModal title="Forgot Password?" cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && resetPassword(emailid.value,forgetPasswordModal)">
     <modal-content>
         <label for="emailid">EmailId</label>
-        <!--<form name="form1" (ngSubmit)="fp.form1.valid && resetPassword(this.fp.value)" #fp="ngForm" novalidate>-->
-            <input type="text" class="form-control" name="emailid" [(ngModel)]="model.emailid" #emailid="ngModel" required email/>
-            <div *ngIf="emailid.hasError('required')" class="help-block">EmailId is required</div>
-            <div *ngIf="emailid.errors?.email" class="help-block">Please enter valid email address</div>
-        <!--</form>-->
+        <input type="text" class="form-control" name="emailid" [(ngModel)]="model.emailid" #emailid="ngModel" required email/>
+        <div *ngIf="emailid.hasError('required')" class="help-block">EmailId is required</div>
+        <div *ngIf="emailid.errors?.email" class="help-block">Please enter valid email address</div>
     </modal-content>
 </modal>

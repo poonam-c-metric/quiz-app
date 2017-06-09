@@ -111,3 +111,9 @@ my-app .main-panel .main-content .card{
     padding: 10px !important;
     font-size: 25px;
 }
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover{
+    background: linear-gradient(60deg, #ab47bc, #8e24aa);
+    border-color: #9c27b0 !important;
+    background-color: #9c27b0;
+}

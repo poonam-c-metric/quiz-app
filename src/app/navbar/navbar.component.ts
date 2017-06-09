@@ -47,6 +47,7 @@ export class NavbarComponent implements OnInit {
         data => {
             console.log("logout Response:");
             this.router.navigate(['/login']);
+            localStorage.clear();
         },
         error => {
             let err = error.json();

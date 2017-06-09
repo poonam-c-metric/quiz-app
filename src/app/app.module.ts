@@ -13,11 +13,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
 import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService, StudentService } from './_services/index';
+import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
-
 import { CustomFormsModule } from '../../node_modules/ng2-validation/dist/index';
 import { ToastyModule } from 'ng2-toasty';
 import { ModalModule } from "ngx-modal";
@@ -37,6 +36,10 @@ import { PublishComponent } from './publish/publish.component';
 import { QuestionComponent } from './question/question.component';
 import { StudentComponent } from './student/student.component';
 import { AddstudentComponent } from './addstudent/addstudent.component';
+import { ContentAddComponent } from './content/content-add/content-add.component';
+import { TrimValueAccessorModule } from 'ng-trim-value-accessor';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +60,11 @@ import { AddstudentComponent } from './addstudent/addstudent.component';
     PublishComponent,
     QuestionComponent,
     StudentComponent,
-    AddstudentComponent
+    AddstudentComponent,
+    ContentAddComponent,
+    DataFilterPipe,
+    ResetPasswordComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -69,6 +76,7 @@ import { AddstudentComponent } from './addstudent/addstudent.component';
     ModalModule,
     UiSwitchModule,
     DataTableModule,
+    TrimValueAccessorModule,
     ToastyModule.forRoot(),
     RecaptchaModule.forRoot()
   ],
@@ -78,6 +86,7 @@ import { AddstudentComponent } from './addstudent/addstudent.component';
         UserService,
         CertificateService,
         StudentService,
+        ContentService,
         {provide: LocationStrategy, useClass: HashLocationStrategy}
       ],
   bootstrap: [AppComponent]

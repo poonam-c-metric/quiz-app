@@ -49,16 +49,22 @@ export class LoginComponent implements OnInit {
                 });
     }
 
-    resetPassword(emailid){
+    resetPassword(emailid,fpmodal){
         console.log("Inside Reset Password"+emailid);
         this.userService.resetPassword(emailid)
             .subscribe(
                 data => {
-                    this.router.navigate(['/']);
+                    fpmodal.close();
+                    this.toastyService.success({
+                        title: data.code,
+                        msg: data.message,
+                        showClose: true,
+                        timeout: 5000,
+                        theme: "material"
+                    });
                 },
                 error => {
                     let err = error.json();
-                    console.log(err);
                     this.toastyService.error({
                         title: err.code,
                         msg: err.message,

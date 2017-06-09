@@ -37,7 +37,6 @@ export class RegisterComponent implements OnInit {
       this.recaptchaResponse = data;
     }
 
-
     register(user) {
         //this.user.recaptcha = (<HTMLInputElement>document.getElementById("g-recaptcha-response")).value;
         this.user.recaptcha = this.recaptchaResponse;
