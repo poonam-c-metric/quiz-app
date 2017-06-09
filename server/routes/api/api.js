@@ -51,7 +51,6 @@ app.post('/registerUser',function(req, res){
 /*Register user*/
 function registerUser(req,res){
   delete req.body["member_confirm_password"];
-  
   if(req.body['member_active_email'] && req.body['member_active_email'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != ''
      && req.body['member_first_name'] && req.body['member_first_name'].trim() != '' && req.body['member_last_name'] && req.body['member_last_name'].trim() != '')
   {
@@ -166,13 +165,12 @@ app.post('/resetPassword',function(req,res){
  */
 
 app.post('/updateUser',function(req,res){
-  if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != '' 
+
+  if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != ''
      && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].trim() != '' && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].trim() != '')
   {
     connection.query('UPDATE cs_members SET ? WHERE ?', [req.body['userdata'], { member_id: req.body["userdata"]["member_id"] }],function(err , result){
        if (err) {
-        connection.query('SELECT * FROM cs_members where member_id=?',req.body["userdata"]["member_id"],function(err1,resp1){
-        });
         res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
        }else{
           res.status(200).json({'status':1,'message': 'User updated successfully.','code': 'Updated'});
@@ -222,7 +220,7 @@ app.post('/updateResetPassword',function(req,res){
   Date   :1/6/2016
  */
 app.post('/changePassword',function(req,res){
-  if(req.body['member_id'] && req.body['member_id'].trim() != '' && req.body['member_old_password'] && req.body['member_old_password'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
+  if(req.body['member_id'] && req.body['member_id'] != '' && req.body['member_old_password'] && req.body['member_old_password'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
   {
   req.body['member_password'] = common.encrypt(req.body['member_password']);
   req.body['member_old_password'] = common.encrypt(req.body['member_old_password']);
@@ -237,7 +235,7 @@ app.post('/changePassword',function(req,res){
               {
                 sendUpdateResetPasswordMail(user[0]);
               }
-              
+
               res.status(200).json({'status':1,'message' : 'You account password has been changed successfully.' , 'code' : 'SUCCESS'});
              }
           });
@@ -251,6 +249,7 @@ app.post('/changePassword',function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
+
 
 // Helper function to make API call to recatpcha and check response
 function verifyRecaptcha(key, callback) {
@@ -308,7 +307,7 @@ function sendConfirmationEmail(req,userid){
  */
 
 function sendResetPasswordMail(user){
-  
+
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.member_active_email;
   var SUBJECT = 'Reset Password Link';
@@ -334,7 +333,7 @@ function sendResetPasswordMail(user){
  */
 
 function sendUpdateResetPasswordMail(user){
-  
+
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.member_active_email;
   var SUBJECT = 'Certspring teacher account password changed';
@@ -344,7 +343,7 @@ function sendUpdateResetPasswordMail(user){
   "Username: "+user.member_active_email+" <br>"+
   "Password: "+common.decrypt(user.member_password)+"<br><br>"+
   "Best regards,<br>The Certspring Team<br>" +
-  "support@Certspring.com"; 
+  "support@Certspring.com";
 
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
     if(err){

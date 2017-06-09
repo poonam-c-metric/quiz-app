@@ -6,9 +6,8 @@ export class StudentService {
 
   constructor(private http : Http) { }
 
-  getStudentData( memberId : Number) {
-  
-    return this.http.get("/api/getStudentDetails?member_id="+memberId)
+  getStudentData( certificateId : Number) {
+    return this.http.get("/api/getStudentDetails?certificate_id="+certificateId)
      .map((response: Response) => {
         let data = response.json();
         return data;
@@ -16,24 +15,22 @@ export class StudentService {
   }
 
   createStudent(studentData : Student){
-    console.log("Inside Create Student Service"+JSON.stringify(studentData));
       return this.http.post('/api/createStudent', studentData, this.jwt())
       .map((response: Response) => {
           let data = response.json();
-          console.log("let data"+data);
           return data;
       });
   }
 
   updateStudent(studata : Student){
-    return this.http.put('/api/updateStudent', studata, this.jwt())
+    return this.http.post('/api/updateStudent', studata, this.jwt())
     .map((response: Response) => {
         let data = response.json();
         return data;
     });
   }
-  
-  
+
+
   deleteStudent(stuid : Number){
     return this.http.get("/api/deleteStudent?student_id="+stuid)
      .map((response: Response) => {

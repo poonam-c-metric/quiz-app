@@ -46,7 +46,7 @@ app.use(router);
           if(contentdata && contentdata.length>0){
             res.status(200).json({"status":1,'message':'content details','content' : contentdata });
           }else{
-            res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+            res.status(200).json({"status":0,'message': 'Content details not found' ,'code': 'No Data'});
           }
       })
   }
@@ -63,14 +63,13 @@ app.use(router);
 app.get('/getContentById',function(req,res){
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
-  connection.query("SELECT * FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
+    connection.query("SELECT * FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
       function(err, contentdata) {
-        
-          if(contentdata && contentdata.length>0){
-            res.status(200).json({"status":1,'message':'content data','content' : contentdata });
-          }else{
-            res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
-          }
+        if(contentdata && contentdata.length>0){
+          res.status(200).json({"status":1,'message':'content data','content' : contentdata });
+        }else{
+          res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+        }
       })
   }
   else
@@ -83,15 +82,15 @@ app.get('/getContentById',function(req,res){
   Desc   : create content
   Date   :2/6/2016
  */
-app.post('/createContent',function(req, res){   
-  
-    
+app.post('/createContent',function(req, res){
+
+
       delete req.body["student_confirm_password"];
        if(req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
-         && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != '' 
+         && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
          && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'].trim() != '')
         {
-        
+
         req.body.date_added=moment().format('YYYY-MM-DD');
         req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
         connection.query('SELECT * FROM cs_resources where resource_name=?',req.body['resource_name'],
@@ -106,7 +105,7 @@ app.post('/createContent',function(req, res){
                    if (err) {
                     res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
                    }else{
-                      
+
                     res.status(200).json({"status":1,'message': 'Content created Successfully' ,'code': 'SUCCESS'});
                    }
                 });
@@ -117,22 +116,22 @@ app.post('/createContent',function(req, res){
     {
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
- 
+
 });
 /*
   Author : Niral Patel
   Desc   : update content
   Date   :5/6/2016
  */
-app.post('/updateContent',function(req, res){   
-  
-    
+app.post('/updateContent',function(req, res){
+
+
       delete req.body["student_confirm_password"];
        if(req.body['resource_id'] && req.body['resource_id'].trim() != '' && req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
-         && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != '' 
+         && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
          && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'].trim() != '')
         {
-        
+
         req.body.date_edited=moment().format('YYYY-MM-DD');
         req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
         connection.query('SELECT * FROM cs_resources where resource_id != '+req.body['resource_id']+' and resource_name=?',req.body['resource_name'],
@@ -147,7 +146,7 @@ app.post('/updateContent',function(req, res){
                    if (err) {
                     res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
                    }else{
-                      
+
                     res.status(200).json({"status":1,'message': 'Content updated Successfully' ,'code': 'SUCCESS'});
                    }
                 });
@@ -158,7 +157,7 @@ app.post('/updateContent',function(req, res){
     {
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
- 
+
 });
 /*
   Author : Niral Patel
@@ -174,7 +173,7 @@ app.get('/deleteContent',function(req,res){
             res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
           }else{
             res.status(200).json({"status":1,'message': 'Content deleted Successfully' ,'code': 'SUCCESS'});
-            
+
           }
       })
     }

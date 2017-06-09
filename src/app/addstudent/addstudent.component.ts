@@ -15,17 +15,12 @@ export class AddstudentComponent implements OnInit {
   studentData : any = {};
 
   studentID : String;
-  
+
   public errorMessage : String;
   public ecommerce : number;
   public showAdvancedFlag : boolean = false;
-  
-  constructor(
-  private router: Router,
-  private toastyService : ToastyService ,
-  private studentService : StudentService,
-  private route: ActivatedRoute
-  ) { 
+
+  constructor(private router: Router,private toastyService : ToastyService , private studentService : StudentService,private route: ActivatedRoute) {
   	 this.studentID = route.snapshot.params['student_id'];
     if(typeof this.studentID != 'undefined'){
       this.getStudentById(this.studentID)
@@ -35,7 +30,7 @@ export class AddstudentComponent implements OnInit {
   }
 
   ngOnInit() {
- 
+
   }
  /* Get student detail by id*/
   getStudentById(stuid){
@@ -55,8 +50,8 @@ export class AddstudentComponent implements OnInit {
   createStudent(){
     if(this.studentID!='' && this.studentID!=undefined){
       this.studentData['id_edited'] = JSON.parse(localStorage.getItem('currentUser')).member_id;
-      this.studentData['is_active'] = 0;
-	  //console.log(this.studentData);
+      this.studentData['certificate_id'] = localStorage.getItem('certificate_id');
+      //this.studentData['is_active'] = 0;
       this.studentService.updateStudent(this.studentData)
         .subscribe(
           data => {
@@ -82,8 +77,8 @@ export class AddstudentComponent implements OnInit {
           });
     }else{
       this.studentData['id_added'] = JSON.parse(localStorage.getItem('currentUser')).member_id;
-      this.studentData['is_active'] = 0;
-      //console.log(this.studentData);
+      //this.studentData['is_active'] = 0;
+      this.studentData['certificate_id'] = localStorage.getItem('certificate_id');
       this.studentService.createStudent(this.studentData)
         .subscribe(
           data => {
@@ -109,5 +104,5 @@ export class AddstudentComponent implements OnInit {
     }
   }
 
-  
+
 }

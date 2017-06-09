@@ -16,6 +16,9 @@ import { PublishComponent } from './publish/publish.component';
 import { QuestionComponent } from './question/question.component';
 import { StudentComponent } from './student/student.component';
 import { AddstudentComponent } from './addstudent/addstudent.component';
+import { ContentAddComponent } from './content/content-add/content-add.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const appRoutes: Routes = [
     { path: '', component: DashboardComponent, canActivate: [AuthGuard]
@@ -25,11 +28,19 @@ const appRoutes: Routes = [
          	component: CertificateComponent
         },
         {
-             path : 'certificate/update/:certificate_id',
-             component: CertificateComponent
+            path : 'certificate/update/:certificate_id',
+            component: CertificateComponent
+        },
+        {
+            path : 'certificate/update',
+            component: CertificateComponent
         },
         {
             path : '',
+            component: HomeComponent
+        },
+        {
+            path : 'dashboard',
             component: HomeComponent
         },
         {
@@ -37,8 +48,16 @@ const appRoutes: Routes = [
          	component: UserComponent
         },
         {
-            path : 'section',
+            path : 'content',
             component: ContentComponent
+        },
+        {
+             path : 'content/insert',
+             component: ContentAddComponent
+        },
+        {
+            path : 'content/edit/:content_id',
+            component: ContentAddComponent
         },
         {
             path : 'mainmenu/:certificate_id',
@@ -78,10 +97,15 @@ const appRoutes: Routes = [
         {
             path : 'students/delete/:student_del_id',
             component: StudentComponent
+        },
+        {
+            path : 'changepassword',
+            component: ChangePasswordComponent
         }]
     },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'resetPassword', component: ResetPasswordComponent },
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
 ];

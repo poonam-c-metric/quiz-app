@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CertificateService } from '../_services/index';
 import { User } from '../_models/index';
-import {ToastyService, ToastyConfig} from 'ng2-toasty';
+import { ToastyService, ToastyConfig } from 'ng2-toasty';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
 
+export class HomeComponent implements OnInit {
   currentUser : User;
   certificateData : Object;
   certificateID : String;
@@ -32,9 +32,16 @@ export class HomeComponent implements OnInit {
               console.log(this.certificateData);
           },
           error => {
-             console.log(error);
+            error = error.json();
+            this.toastyService.info({
+              title: error.code,
+              msg: error.message,
+              showClose: true,
+              timeout: 5000,
+              theme: "material"
+            });
           });
-    }
+  }
 
     openDeleteCertificateModal(certid,dcmodal){
       dcmodal.open();
