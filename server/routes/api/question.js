@@ -34,7 +34,7 @@ app.use(router);
 
 /*
   Author : Niral Patel
-  Desc   : Get content detail
+  Desc   : Get question detail
   Date   :8/6/2016
  */
 
