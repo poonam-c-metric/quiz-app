@@ -41,7 +41,7 @@ app.use(router);
  app.get('/getContentDetails',function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
   {
-  connection.query("SELECT * FROM cs_resources where certificate_id=?" , [req.query.certificate_id] ,
+  connection.query("SELECT cr.resource_id,cr.certificate_id,cr.resource_name,cr.description,count(question_id) as question FROM cs_resources as cr LEFT JOIN cs_questions AS cq ON cq.section_id = cr.resource_id where cr.certificate_id= "+req.query.certificate_id+" and cr.is_delete = 0 GROUP BY cq.section_id",
       function(err, contentdata) {
           if(contentdata && contentdata.length>0){
             res.status(200).json({"status":1,'message':'content details','content' : contentdata });
@@ -167,7 +167,9 @@ app.post('/updateContent',function(req, res){
 app.get('/deleteContent',function(req,res){
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
-  connection.query("Delete from cs_resources where resource_id=?" , [req.query['resource_id']] ,
+  
+     var status = {"is_delete": '1'};
+     connection.query("Update `cs_resources` SET ? WHERE ?",[ status , { resource_id : req.query.resource_id }],
       function(err, results) {
           if(err){
             res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
