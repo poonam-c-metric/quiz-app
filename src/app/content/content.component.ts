@@ -15,8 +15,9 @@ export class ContentComponent implements OnInit {
     public sortBy = "email";
     public sortOrder = "asc";
     contentlistData : Object;
+    contentDeleteID : number;
 
-    constructor(private toastyService:ToastyService , private contentService:ContentService) {
+    constructor(private toastyService:ToastyService , private contentService:ContentService, private router : Router) {
     	this.getContentData(localStorage.getItem('certificate_id'));
     }
 
@@ -51,4 +52,32 @@ export class ContentComponent implements OnInit {
 	            }
 	        });
 	}
+
+
+    openDeleteContentModal(contentid,dcmodal){
+       dcmodal.open();
+       this.contentDeleteID = contentid;
+    }
+
+
+    deleteContent(contentid,dcmodal){
+        console.log("dcmodal");
+        this.contentService.deleteContent(contentid)
+          .subscribe(
+            data => {
+              dcmodal.close();
+              this.toastyService.success({
+                  title: "Success",
+                  msg: "Content deleted successfully",
+                  showClose: true,
+                  timeout: 5000,
+                  theme: "material"
+              });
+              this.getContentData(localStorage.getItem('certificate_id'));
+              this.router.navigate(['/content']);
+            },
+            error => {
+                let err = error.json();
+            });
+    }
 }

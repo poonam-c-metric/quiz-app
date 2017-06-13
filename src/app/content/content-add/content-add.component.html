@@ -1,52 +1,63 @@
 <div class="col-md-6 col-md-offset-3">
-    <h2>Add Content</h2>
-    <form name="form" (ngSubmit)="f.form.valid && addContent(f.value)" #f="ngForm" novalidate>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !section_name.valid }">
+    <h2 *ngIf="!contentID">Add Content</h2>
+    <h2 *ngIf="contentID">Update Content</h2>
+    <form name="form" (ngSubmit)="f.form.valid && addContent()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !resource_name.valid }">
             <label for="firstName">Content Name</label>
-            <input type="text" class="form-control" name="section_name" [(ngModel)]="content.section_name" #section_name="ngModel" required />
-            <div *ngIf="f.submitted && !section_name.valid" class="help-block">Section Name is required</div>
+            <input type="text" class="form-control" name="resource_name" [(ngModel)]="contentData.resource_name" #resource_name="ngModel" required />
+            <div *ngIf="f.submitted && !resource_name.valid" class="help-block">Section Name is required</div>
         </div>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !section_name.valid }">
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !resource_name.valid }">
             <label for="description">Content Description</label>
-            <input type="text" class="form-control" name="description" [(ngModel)]="content.description" #description="ngModel" required />
+            <input type="text" class="form-control" name="description" [(ngModel)]="contentData.description" #description="ngModel" required />
             <div *ngIf="f.submitted && !description.valid" class="help-block">Content Description is required</div>
         </div>
-        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !contentlink.valid }">
-            <label for="content">Content</label>
-            <input type="text" class="form-control" name="contentlink" [(ngModel)]="content.contentlink" #contentlink="ngModel" required />
-            <div *ngIf="f.submitted && !contentlink.valid" class="help-block">Content Link is required</div>
-        </div>
-        <div class="form-group" [ngClass]="{'has-error': f.submitted && !contenticon.valid }">
-            <label for="contenticon">Content Icon</label>
-            <!--<input type="text" class="form-control" name="contenticon" [(ngModel)]="content.contenticon" #contenticon="ngModel" required /> -->
-             <a data-toggle="modal" data-backdrop="false" href="#chooseIconModal" (click)="chooseIconModal.open()"><i class="material-icons">image</i></a>
-            <div *ngIf="f.submitted && !contenticon.valid" class="help-block">Content Icon is required</div>
+        <br>
+        <div class="input-group">
+            <div class="col-md-3" style="padding-left:0px !important">
+                <label for="url_link">Content:</label>
+            </div>
+            <div class="col-md-3">
+               <input #fileUpload type="file" name="single" ng2FileSelect [uploader]="uploader"/>
+               <span *ngIf="contentData.url_link!=null">
+                    <img src='uploads/{{contentData.url_link}}' style="width:100px;height:50px"/>
+                </span>
+            </div>
+            <br/>
+            <div class="has-error">
+                <div *ngIf="errorMessage" class="help-block" style="clear : both">  {{errorMessage}}</div>
+            </div>
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Add"/>
-            <a [routerLink]="['/dashboard']" class="btn btn-link">Cancel</a>
+            <label for="web_image">Content Icon</label>
+            <a data-toggle="modal" data-backdrop="false" href="#chooseIconModal" (click)="chooseIconModal.open()"><i class="material-icons">image</i></a>
+            <div *ngIf="contentData.web_image">{{contentData.web_image}}</div>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+            <a [routerLink]="['/content']" class="btn btn-link">Cancel</a>
         </div>
     </form>
 </div>
 
- <modal #chooseIconModal title="Select Icon" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="useIcon()">
+ <modal #chooseIconModal title="Select Icon" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="useIcon(chooseIconModal)" id="chooseiconmodal">
     <modal-content>
-        <input id="2-Video.png" name="credit-card" value="2-Video.png" type="radio">
-        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 36px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/2-Video.png);">Video</label>
+        <input #video name="web_image" [checked]="contentData.web_image == video.value" value="2-Video.png" type="radio" (click)="contentData.web_image = video.value">
+        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/2-Video.png);">Video</label>
 
-        <input id="5-Other.png" name="credit-card" value="5-Other.png" type="radio">
-        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 36px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/5-Other.png);">Other</label>
+        <input #other name="web_image" [checked]="contentData.web_image==other.value" value='5-Other.png' type="radio" (click)="contentData.web_image = other.value">
+        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/5-Other.png);">Other</label>
 
-        <input id="1-General.png" name="credit-card" value="1-General.png" type="radio">
-        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 36px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/1-General.png);">General</label>
+        <input #general name="web_image" [checked]="contentData.web_image==general.value" value='1-General.png' type="radio" (click)="contentData.web_image = general.value">
+        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/1-General.png);">General</label>
 
-        <input id="3-Image.png" name="credit-card" value="3-Image.png" type="radio">
-        <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 36px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/3-Image.png);">Image</label>
+        <input #image name="web_image" [checked]="contentData.web_image==image.value" value='3-Image.png' type="radio" (click)="contentData.web_image = image.value">
+        <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/3-Image.png);">Image</label>
 
-        <input id="6-Audio.png" name="credit-card" value="6-Audio.png" type="radio">
-        <label class="drinkcard-cc" for="6-Audio.png" style="text-align: left;padding-left: 36px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/6-Audio.png);">Audio</label>
+        <input #audio name="web_image" [checked]="contentData.web_image==audio.value" value='6-Audio.png' type="radio" (click)="contentData.web_image = audio.value">
+        <label class="drinkcard-cc" for="6-Audio.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/6-Audio.png);">Audio</label>
 
-        <input id="4-Picture.png" name="credit-card" value="4-Picture.png" type="radio">
+        <input #picture name="web_image" [checked]="contentData.web_image==picture.value" value='4-Picture.png' type="radio" (click)="contentData.web_image = picture.value">
         <label class="drinkcard-cc" for="4-Picture.png" style="text-align: left;padding-left: 34px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/4-Picture.png);">Picture</label>
 
     </modal-content>

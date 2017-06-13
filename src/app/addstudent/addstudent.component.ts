@@ -13,7 +13,6 @@ export class AddstudentComponent implements OnInit {
 
 
   studentData : any = {};
-
   studentID : String;
 
   public errorMessage : String;
@@ -21,18 +20,17 @@ export class AddstudentComponent implements OnInit {
   public showAdvancedFlag : boolean = false;
 
   constructor(private router: Router,private toastyService : ToastyService , private studentService : StudentService,private route: ActivatedRoute) {
-  	 this.studentID = route.snapshot.params['student_id'];
+    this.studentID = route.snapshot.params['student_id'];
     if(typeof this.studentID != 'undefined'){
       this.getStudentById(this.studentID)
     }
-
-
   }
 
   ngOnInit() {
 
   }
- /* Get student detail by id*/
+
+  /* Get student detail by id*/
   getStudentById(stuid){
      this.studentService.getStudentById(stuid)
       .subscribe(

@@ -1,5 +1,6 @@
 <div class="col-md-6 col-md-offset-3">
-    <h2>Create Certificate</h2>
+    <h2 *ngIf="!certificateID">Create Certificate</h2>
+    <h2 *ngIf="certificateID">Update Certificate</h2>
     <form name="form" (ngSubmit)="f.form.valid && createCertificate()" #f="ngForm" novalidate>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !certificate_name.valid }">
             <label for="certificate_name">Program Name:</label>
@@ -20,7 +21,7 @@
             </div>
             <div class="col-md-3">
                <input #fileUpload type="file" name="single" ng2FileSelect [uploader]="uploader"/>
-               <span *ngIf="certificateData.certificate_logo!=null">
+                <span *ngIf="certificateData.certificate_logo!=null">
                     <img src='uploads/{{certificateData.certificate_logo}}' style="width:100px;height:50px"/>
                 </span>
             </div>

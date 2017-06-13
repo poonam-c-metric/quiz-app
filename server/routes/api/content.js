@@ -83,12 +83,11 @@ app.get('/getContentById',function(req,res){
   Date   :2/6/2016
  */
 app.post('/createContent',function(req, res){
-
-
-      delete req.body["student_confirm_password"];
+      //delete req.body["student_confirm_password"];
+      console.log('Inside create content'+req.body);
        if(req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
          && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
-         && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'].trim() != '')
+         && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'] != '')
         {
 
         req.body.date_added=moment().format('YYYY-MM-DD');
@@ -124,12 +123,9 @@ app.post('/createContent',function(req, res){
   Date   :5/6/2016
  */
 app.post('/updateContent',function(req, res){
-
-
-      delete req.body["student_confirm_password"];
-       if(req.body['resource_id'] && req.body['resource_id'].trim() != '' && req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
+       if(req.body['resource_id'] && req.body['resource_id'] != '' && req.body['certificate_id'] && req.body['certificate_id'] != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
          && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
-         && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'].trim() != '')
+         && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added']!= '')
         {
 
         req.body.date_edited=moment().format('YYYY-MM-DD');
@@ -165,11 +161,11 @@ app.post('/updateContent',function(req, res){
   Date   : 5/6/2016
  */
 app.get('/deleteContent',function(req,res){
+  console.log(req.query);
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
-  
-     var status = {"is_delete": '1'};
-     connection.query("Update `cs_resources` SET ? WHERE ?",[ status , { resource_id : req.query.resource_id }],
+    var status = {"is_delete": '1'};
+    connection.query("Update `cs_resources` SET ? WHERE ?",[ status , { resource_id : req.query.resource_id }],
       function(err, results) {
           if(err){
             res.status(401).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});

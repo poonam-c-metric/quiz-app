@@ -38,6 +38,7 @@ export class StudentService {
         return data;
     });
   }
+
   getStudentById(stuid : Number){
     return this.http.get("/api/getStudentById?student_id="+stuid)
      .map((response: Response) => {
