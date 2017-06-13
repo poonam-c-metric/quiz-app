@@ -117,3 +117,10 @@ my-app .main-panel .main-content .card{
     border-color: #9c27b0 !important;
     background-color: #9c27b0;
 }
+
+#chooseiconmodal .modal-dialog{
+    width: 700px !important;
+}
+.modal-dialog{
+    width: 700px !important;
+}

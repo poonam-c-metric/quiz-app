@@ -12,11 +12,20 @@ import { ToastyService, ToastyConfig } from 'ng2-toasty';
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
     constructor(private router : Router, private toastyService:ToastyService) {
-
+      this.router.events.subscribe(path => {
+        let current = path['url'];
+        let mainmenu = (<HTMLScriptElement[]><any>document.getElementById("MainMenu").querySelectorAll('a'));
+        for (let elem of mainmenu) {
+          if(current.indexOf(elem.innerHTML.toLowerCase()) !== -1){
+            $(elem).addClass('active');
+          }
+        }
+      });
     }
+
     ngOnInit() {
-        //$.getScript('../../assets/js/sidebar-moving-tab.js');
-        this.menuItems = ROUTES.filter(menuItem => menuItem);
+      //$.getScript('../../assets/js/sidebar-moving-tab.js');
+      this.menuItems = ROUTES.filter(menuItem => menuItem);
     }
 
     getCertificateId(routerLink,elem){
@@ -39,5 +48,4 @@ export class SidebarComponent implements OnInit {
             });
         }
     }
-
 }
