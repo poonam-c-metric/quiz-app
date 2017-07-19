@@ -19,9 +19,9 @@
             </div>
             <div class="col-md-3">
                <input #fileUpload type="file" name="single" ng2FileSelect [uploader]="uploader"/>
-               <span *ngIf="contentData.url_link!=null">
+               <!--<span *ngIf="contentData.url_link!=null">
                     <img src='uploads/{{contentData.url_link}}' style="width:100px;height:50px"/>
-                </span>
+                </span> -->
             </div>
             <br/>
             <div class="has-error">
@@ -43,22 +43,22 @@
  <modal #chooseIconModal title="Select Icon" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="useIcon(chooseIconModal)" id="chooseiconmodal">
     <modal-content>
         <input #video name="web_image" [checked]="contentData.web_image == video.value" value="2-Video.png" type="radio" (click)="contentData.web_image = video.value">
-        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/2-Video.png);">Video</label>
+        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/video.png);">Video</label>
 
         <input #other name="web_image" [checked]="contentData.web_image==other.value" value='5-Other.png' type="radio" (click)="contentData.web_image = other.value">
-        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/5-Other.png);">Other</label>
+        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/other.png);">Other</label>
 
         <input #general name="web_image" [checked]="contentData.web_image==general.value" value='1-General.png' type="radio" (click)="contentData.web_image = general.value">
-        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/1-General.png);">General</label>
+        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/general.png);">General</label>
 
         <input #image name="web_image" [checked]="contentData.web_image==image.value" value='3-Image.png' type="radio" (click)="contentData.web_image = image.value">
-        <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/3-Image.png);">Image</label>
+        <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Image.png);">Image</label>
 
         <input #audio name="web_image" [checked]="contentData.web_image==audio.value" value='6-Audio.png' type="radio" (click)="contentData.web_image = audio.value">
-        <label class="drinkcard-cc" for="6-Audio.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/6-Audio.png);">Audio</label>
+        <label class="drinkcard-cc" for="6-Audio.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Audio.png);">Audio</label>
 
         <input #picture name="web_image" [checked]="contentData.web_image==picture.value" value='4-Picture.png' type="radio" (click)="contentData.web_image = picture.value">
-        <label class="drinkcard-cc" for="4-Picture.png" style="text-align: left;padding-left: 34px;padding-top:54px;background-image:url(https://go.certspring.com/assets/uploads/contents/4-Picture.png);">Picture</label>
+        <label class="drinkcard-cc" for="4-Picture.png" style="text-align: left;padding-left: 34px;padding-top:54px;background-image:url(assets/icons/Picture.png);">Picture</label>
 
     </modal-content>
 </modal>

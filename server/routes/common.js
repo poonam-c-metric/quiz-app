@@ -1,3 +1,4 @@
+var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var  algorithm = 'aes-256-ctr';
 var privateKey = 'c-metricsolution';
@@ -15,4 +16,14 @@ exports.encrypt = function(password) {
     var crypted = cipher.update(password, 'utf8', 'hex');
     crypted += cipher.final('hex');
     return crypted;
+}
+
+IsAuthenticated = function(req,res,next){
+  jwt.verify(req.headers['authorization'], privateKey, function(err, decoded) {
+    if(decoded){
+      next();
+    }else{
+      res.status(401).json({'status':0,'message': 'Unauthorized User' ,'code': 'UnAuthorized'});
+    }
+  });
 }

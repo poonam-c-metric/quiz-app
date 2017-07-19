@@ -26,31 +26,31 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         if (localStorage.getItem('currentUser')) {
-          console.log("Current User Exists");
           this.router.navigate(['/']);
         }
     }
 
     login() {
         this.authenticationService.login(this.model.username, this.model.password)
-            .subscribe(
-                data => {
-                    this.router.navigate(['/']);
-                },
-                error => {
-                    let err = error.json();
-                    this.toastyService.error({
-                        title: "Login Failed",
-                        msg: err.message,
-                        showClose: true,
-                        timeout: 5000,
-                        theme: "material"
-                    });
+        .subscribe(
+            data => {
+                console.log('login successful');
+                this.router.navigate(['/']);
+            },
+            error => {
+                console.log('Inside Error');
+                let err = error.json();
+                this.toastyService.error({
+                    title: "Login Failed",
+                    msg: err.message,
+                    showClose: true,
+                    timeout: 5000,
+                    theme: "material"
                 });
+            });
     }
 
     resetPassword(emailid,fpmodal){
-        console.log("Inside Reset Password"+emailid);
         this.userService.resetPassword(emailid)
             .subscribe(
                 data => {

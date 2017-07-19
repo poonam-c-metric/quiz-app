@@ -1,0 +1,203 @@
+<div class="col-md-6 col-md-offset-3">
+    <h2>Add Question</h2>
+    <div class="row"><b>Drag Question Type:</b></div>
+    <div class="row">
+        <div class="col-sm-3 list-group-item" draggable *ngFor="let item of items"
+        [dragData]="item">
+            {{item}}
+        </div>
+    </div>
+
+    <br><br><br>
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body" droppable (onDrop)="onItemDrop($event)" style="min-width:500px;min-height:500px;">
+                <div *ngIf="questionData.question_type && questionData.question_type=='single'">
+                    <div *ngIf="pageLoading">
+                        <img src="assets/img/Loading_icon2.gif"/>
+                    </div>
+                    <div *ngIf="pageLoad">
+                        <form name="form" (ngSubmit)="createQuestion(f.form)" #f="ngForm" novalidate>
+                            <div class="form-group" [ngClass]="{'has-error': f.submitted
+                            && !question_text.valid }">
+                               <label for="question">Question:*</label>
+                                <input type="text" class="form-control" name="question_text" [(ngModel)]="questionData.question_text" #question_text="ngModel" required />
+                                <div *ngIf="f.submitted && !question_text.valid"  class="help-block">Question is required</div>
+                            </div>
+
+                            <div class="clear"></div><br/>
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    <label for="noofans">No. Of Answer:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" name="noofans"  [(ngModel)]="noofans" (ngModelChange)="initizeVar()" required>
+                                        <option  [value]="2" [selected]="noofans ==2">2</option>
+                                        <option  [value]="3" [selected]="noofans ==3">3</option>
+                                        <option  [value]="4" [selected]="noofans ==4">4</option>
+                                        <option  [value]="5" [selected]="noofans ==5">5</option>
+                                        <option  [value]="6" [selected]="noofans ==6">6</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="clear"></div><br/>
+                            <div class="form-group">
+                                <div *ngFor="let number of [0,1,2,3,4,5]">
+                                    <div *ngIf="noofans>number">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                 <input type="radio" name="radiogroup"
+                                                    [checked]="number === selectedValue"
+                                                    [value]="number"
+                                                    (change)="onSelectionChange(number)">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <input type="text" class="form-control" name="answer{{number}}" id="answer{{number}}" [(ngModel)]="questionData['answers'][number]['answer_text']" required />
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="answerEmptyFlag" class="help-block" style="color:red"> Answers are required</div>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" value="Save"/>
+                                <a [routerLink]="['/questions']" class="btn btn-link">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div *ngIf="questionData.question_type && questionData.question_type=='multiple'">
+                    <form name="form" (ngSubmit)="createQuestion(f.form)" #f="ngForm" novalidate>
+                        <div class="form-group" [ngClass]="{ 'has-error': f.submitted
+                        && !question_text.valid }">
+                           <label for="question">Question:*</label>
+                            <input type="text" class="form-control" name="question_text" [(ngModel)]="questionData.question_text" #question_text="ngModel" required />
+                            <div *ngIf="f.submitted && !question_text.valid"  class="help-block">Question is required</div>
+                        </div>
+
+                        <div class="clear"></div><br/>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <label for="noofans">No. Of Answer:</label>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" name="noofans"  [(ngModel)]="noofans" (ngModelChange)="initizeVar()" required>
+                                    <option  [value]="2" [selected]="noofans ==2">2</option>
+                                    <option  [value]="3" [selected]="noofans ==3">3</option>
+                                    <option  [value]="4" [selected]="noofans ==4">4</option>
+                                    <option  [value]="5" [selected]="noofans ==5">5</option>
+                                    <option  [value]="6" [selected]="noofans ==6">6</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="clear"></div><br/>
+                        <div class="form-group">
+                            <div *ngFor="let number of [0,1,2,3,4,5]">
+                                <div *ngIf="noofans>number">
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                             <input type="checkbox"
+                                                [value]="number"
+                                                [(ngModel)]="questionData['answers'][number]['is_correct']" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectionChange(number)">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" name="answer{{number}}" id="answer{{number}}" [(ngModel)]="questionData['answers'][number]['answer_text']" #answer{{number}}="ngModel" required />
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="answerEmptyFlag" class="help-block" style="color:red"> Answers are required</div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                            <a [routerLink]="['/questions']" class="btn btn-link">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+                <div *ngIf="questionData.question_type && questionData.question_type=='image'">
+                    <form name="form" (ngSubmit)="createQuestion(f.form)" #f="ngForm" novalidate>
+                        <div class="form-group" [ngClass]="{ 'has-error': f.submitted
+                        && !question_text.valid }">
+                           <label for="question">Question:*</label>
+                            <input type="text" class="form-control" name="question_text" [(ngModel)]="questionData.question_text" #question_text="ngModel" required />
+                            <div *ngIf="f.submitted && !question_text.valid"  class="help-block">Question is required</div>
+                        </div>
+
+                        <div class="clear"></div><br/>
+                        <div class="form-group">
+                            <div class="row">
+                                <div *ngFor="let number of [0,1,2,3]">
+                                    <div class="col-md-1">
+                                             <input type="radio" name="radiogroup"
+                                                [checked]="number === selectedValue"
+                                                [value]="number"
+                                                (change)="onSelectionChange(number)">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <img src="assets/img/faces/smily{{number}}.png" height="80px" width="80px"/>
+                                         <!--<input type="hidden" class="form-control" name="answer{{number}}" id="answer{{number}}" [(ngModel)]="questionData['answers'][number]['answer_text']" required /> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div *ngIf="answerEmptyFlag" class="help-block" style="color:red"> Answers are required</div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                            <a [routerLink]="['/questions']" class="btn btn-link">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+
+                 <div *ngIf="questionData.question_type && questionData.question_type=='dynamic'">
+                    Dynamic Image
+                    <form name="form" (ngSubmit)="createQuestion(f.form)" #f="ngForm" novalidate>
+                        <div class="form-group" [ngClass]="{ 'has-error': f.submitted
+                        && !question_text.valid }">
+                           <label for="question">Question:*</label>
+                            <input type="text" class="form-control" name="question_text" [(ngModel)]="questionData.question_text" #question_text="ngModel" required />
+                            <div *ngIf="f.submitted && !question_text.valid"  class="help-block">Question is required</div>
+                        </div>
+
+                        <div class="clear"></div><br/>
+                        <div class="input-group">
+                            <div class="row">
+                                <div *ngFor="let number of [0,1,2,3];">
+                                    <div class="col-md-1">
+                                        <input type="radio" name="radiogroup"
+                                            [checked]="number === selectedValue"
+                                            [value]="number"
+                                            (change)="onSelectionChange(number)"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="image-upload">
+                                            <label for="fileupload{{number}}" style="width:400px;">
+                                               <img src="http://goo.gl/pB9rpQ"/>
+                                            </label>
+                                            <input #fileUpload type="file" name="single{{number}}"
+                                            (change)="fileUploadDetector($event,number)"
+                                            ng2FileSelect id="fileupload{{number}}" [uploader]="uploader"
+                                            />
+                                            <img src="uploads/question/{{questionData['answers'][number]['answer_text']}}" style="width:100px;height:50px"/>
+                                            <!--<span>{{questionData['answers'][number]['answer_text']}}</span> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                        <div *ngIf="answerEmptyFlag" class="help-block" style="color:red"> Answers are required</div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                            <a [routerLink]="['/questions']" class="btn btn-link">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

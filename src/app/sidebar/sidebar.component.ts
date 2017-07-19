@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
         let mainmenu = (<HTMLScriptElement[]><any>document.getElementById("MainMenu").querySelectorAll('a'));
         for (let elem of mainmenu) {
           if(current.indexOf(elem.innerHTML.toLowerCase()) !== -1){
-            $(elem).addClass('active');
+           // $(elem).addClass('active');
           }
         }
       });

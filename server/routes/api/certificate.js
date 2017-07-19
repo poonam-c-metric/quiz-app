@@ -33,7 +33,8 @@ app.use(router);
 });
 
 
-app.get('/getCertificateDetails',function(req,res){
+
+app.get('/getCertificateDetails',IsAuthenticated,function(req,res){
   if(req.query.member_id && req.query.member_id!= ''){
     connection.query("SELECT * FROM cs_certificate where is_delete = 0 and id_added=?" , [req.query.member_id] ,
       function(err, certdata) {
@@ -48,7 +49,7 @@ app.get('/getCertificateDetails',function(req,res){
   }
 });
 
-app.get('/getCertificateById',function(req,res){
+app.get('/getCertificateById',IsAuthenticated,function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id']!= '')
   {
   connection.query("SELECT * FROM cs_certificate where certificate_id=?" , [req.query.certificate_id] ,
@@ -66,7 +67,7 @@ app.get('/getCertificateById',function(req,res){
   }
 });
 
-app.post('/createCertificate',function(req, res){
+app.post('/createCertificate',IsAuthenticated,function(req, res){
   if(req.body['certificate_name'] && req.body['certificate_name'].trim() != '')
   {
     req.body.date_added=moment().format('YYYY-MM-DD');
@@ -95,7 +96,7 @@ app.post('/createCertificate',function(req, res){
   }
  });
 
-app.post('/updateCertificate',function(req, res){
+app.post('/updateCertificate', IsAuthenticated, function(req, res){
   if(req.body['certificate_name'] && req.body['certificate_name'].trim() != '' && req.body['certificate_id'] && req.body['certificate_id']!= '')
   {
   req.body.date_edited=moment().format('YYYY-MM-DD');
@@ -115,7 +116,7 @@ app.post('/updateCertificate',function(req, res){
   }
 });
 
-app.get('/deleteCertificateById',function(req,res){
+app.get('/deleteCertificateById',IsAuthenticated, function(req,res){
   if(req.query.certificate_id && req.query.certificate_id != ''){
      var status = {"is_delete": '1'};
      connection.query("Update `cs_certificate` SET ? WHERE ?",[ status , { certificate_id : req.query.certificate_id }],
@@ -131,6 +132,19 @@ app.get('/deleteCertificateById',function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
+
+/*function ensureAuthorized(req, res, next) {
+    var bearerToken;
+    var bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== 'undefined') {
+        var bearer = bearerHeader.split(" ");
+        bearerToken = bearer[1];
+        req.token = bearerToken;
+        next();
+    }else {
+      res.status(401).json({'status':0,'message': 'Unauthorized User' ,'code': 'Unauthorized'});
+    }
+}*/
 
 /** File Upload coding **/
 
@@ -150,7 +164,7 @@ var upload = multer({ //multer settings
 
 
 /** API path that will upload the files */
-app.post('/upload', function(req, res) {
+app.post('/upload', IsAuthenticated, function(req, res) {
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});

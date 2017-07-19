@@ -32,16 +32,16 @@
             <br>
             <div *ngIf="student_confirm_password.dirty && student_confirm_password.errors?.equalTo" class="help-block">Password and Confirm Password must match.</div>
         </div>
-        
+
         <div class="form-group">
             <label for="is_email_active">Send information to student:</label>
-            
+
              <input tabindex="6" [(ngModel)]="studentData.is_email_active" name="is_email_active" type="checkbox" id="is_email_active" autocomplete="off" value="1" checked="true">
         </div>
-       
+
 
         <br>
-      
+
         <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Save"/>
              <a [routerLink]="['/students']" class="btn btn-link">Cancel</a>

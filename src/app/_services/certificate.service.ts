@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Certificate } from '../_models/certificate';
 
+
 @Injectable()
 export class CertificateService {
 
@@ -18,17 +19,15 @@ export class CertificateService {
   }
 
   createCertificate(certdata : Certificate){
-    console.log("Inside Create Certificate Service"+JSON.stringify(certdata));
-      return this.http.post('/api/createCertificate', certdata, this.jwt())
-      .map((response: Response) => {
-          let data = response.json();
-          return data;
-      });
+    return this.http.post('/api/createCertificate', certdata) //this.jwt()
+    .map((response: Response) => {
+        let data = response.json();
+        return data;
+    });
   }
 
   updateCertificate(certdata : Certificate){
-    console.log("Inside Update Certificate Service"+JSON.stringify(certdata));
-    return this.http.post('/api/updateCertificate', certdata, this.jwt())
+    return this.http.post('/api/updateCertificate', certdata) //, this.jwt()
     .map((response: Response) => {
         let data = response.json();
         return data;
@@ -52,12 +51,12 @@ export class CertificateService {
       });
   }
 
- // private helper methods
+  // private helper methods
   private jwt() {
       // create authorization header with jwt token
       let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      if (currentUser && currentUser.token) {
-          let headers = new Headers({ 'Authorization': 'Bearer ' + currentUser.token });
+      if (currentUser && currentUser.accessToken) {
+          let headers = new Headers({ 'Authorization': 'Bearer ' + currentUser.accessToken });
           return new RequestOptions({ headers: headers });
       }
   }

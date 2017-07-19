@@ -124,3 +124,43 @@ my-app .main-panel .main-content .card{
 .modal-dialog{
     width: 700px !important;
 }
+.image-upload > input {
+    display: none;
+}
+.image-upload img {
+    width: 80px;
+    cursor: pointer;
+}
+#examination .headerStyle{
+    background-color: #ab47bc !important;
+    color: #FFFFFF !important;
+}
+#examination .navbar-header{
+    float: left !important;
+    padding: 5px !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+#examination .navbar-brand {
+   float:none;
+}
+#examination .answer ul li {
+    width: 26px;
+    height: 26px;
+    float: left;
+    list-style: none;
+    background-color: #ab47bc;
+    color: #FFF;
+    text-align: center;
+    line-height: 26px;
+    margin: 2px;
+    border: 1px solid #000;
+}
+
+#examination .btn-link{
+    color: white !important;
+}
+
+#examination .answer ul li.active{
+    background-color: green;
+}
