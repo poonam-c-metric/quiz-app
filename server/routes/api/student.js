@@ -37,7 +37,7 @@ app.use(router);
   Desc   : Create student
   Date   :30/6/2016
  */
-app.post('/createStudent',function(req, res){
+app.post('/createStudent', IsAuthenticated, function(req, res){
       delete req.body["student_confirm_password"];
        if(req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
@@ -86,7 +86,7 @@ app.post('/createStudent',function(req, res){
   Date   :30/6/2016
  */
 
- app.get('/getStudentDetails',function(req,res){
+ app.get('/getStudentDetails', IsAuthenticated, function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
   {
   connection.query("SELECT * FROM cs_students where is_delete = 0 and certificate_id=?" , [req.query.certificate_id] ,
@@ -109,7 +109,7 @@ app.post('/createStudent',function(req, res){
   Desc   : Get student by id
   Date   :31/6/2016
  */
-app.get('/getStudentById',function(req,res){
+app.get('/getStudentById', IsAuthenticated, function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
   {
   connection.query("SELECT * FROM cs_students where student_id=?" , [req.query['student_id']] ,
@@ -133,7 +133,7 @@ app.get('/getStudentById',function(req,res){
   Desc   : Update student detail
   Date   :31/6/2016
  */
-app.post('/updateStudent',function(req, res){
+app.post('/updateStudent', IsAuthenticated, function(req, res){
   delete req.body["student_confirm_password"];
    if(req.body['student_id'] && req.body['student_id'] != '' && req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
@@ -171,7 +171,7 @@ app.post('/updateStudent',function(req, res){
   Desc   : Delete student
   Date   :31/6/2016
  */
-app.get('/deleteStudent',function(req,res){
+app.get('/deleteStudent', IsAuthenticated, function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
   {
  // connection.query("Delete from cs_students where student_id=?" , [req.query['student_id']] ,

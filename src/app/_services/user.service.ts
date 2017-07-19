@@ -3,6 +3,7 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Router} from '@angular/router';
 import { User } from '../_models/index';
 
+
 @Injectable()
 export class UserService {
     constructor(private http: Http , private router: Router) { }
@@ -15,8 +16,8 @@ export class UserService {
         });
     }
 
-    makeUserActive( userId : String , accessToken : String){
-        return this.http.put('/api/activeUser',{ userId: userId, accessToken: accessToken })
+    makeUserActive( userId: String , accessToken: String) {
+        return this.http.put('/api/activeUser', { userId: userId, accessToken: accessToken })
             .map((response: Response) => {
                 let data = response.json();
                 if(data.affectedRows && data.affectedRows>0 && localStorage.getItem('currentUser')){

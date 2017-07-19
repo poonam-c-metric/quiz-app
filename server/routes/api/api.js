@@ -164,7 +164,7 @@ app.post('/resetPassword',function(req,res){
   Date   :29/5/2016
  */
 
-app.post('/updateUser',function(req,res){
+app.post('/updateUser', IsAuthenticated, function(req,res){
 
   if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != ''
      && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].trim() != '' && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].trim() != '')
@@ -219,7 +219,7 @@ app.post('/updateResetPassword',function(req,res){
   Desc   : Change password
   Date   :1/6/2016
  */
-app.post('/changePassword',function(req,res){
+app.post('/changePassword', IsAuthenticated, function(req,res){
   if(req.body['member_id'] && req.body['member_id'] != '' && req.body['member_old_password'] && req.body['member_old_password'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
   {
   req.body['member_password'] = common.encrypt(req.body['member_password']);
@@ -254,18 +254,18 @@ app.post('/changePassword',function(req,res){
 // Helper function to make API call to recatpcha and check response
 function verifyRecaptcha(key, callback) {
   https.get("https://www.google.com/recaptcha/api/siteverify?secret=" + SECRET + "&response=" + key, function(res) {
-          var data = "";
-          res.on('data', function (chunk) {
-                  data += chunk.toString();
-          });
-          res.on('end', function() {
-                  try {
-                          var parsedData = JSON.parse(data);
-                          callback(parsedData.success);
-                  } catch (e) {
-                          callback(false);
-                  }
-          });
+    var data = "";
+    res.on('data', function (chunk) {
+      data += chunk.toString();
+    });
+    res.on('end', function() {
+      try {
+        var parsedData = JSON.parse(data);
+        callback(parsedData.success);
+      } catch (e) {
+        callback(false);
+      }
+    });
   });
 }
 /*

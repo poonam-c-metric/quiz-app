@@ -12,7 +12,6 @@ export class AuthGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         if (localStorage.getItem('currentUser')) {
             // logged in so return true
-            console.log("Current User Exists");
             return true
         }
 
@@ -25,7 +24,6 @@ export class AuthGuard implements CanActivate {
             });
             this.userservice.makeUserActive(data[0]['userId'],data[1]['accessToken']);
         }
-        console.log("Inside Else");
         // not logged in so redirect to login page with the return url
         this.router.navigate(['/login']);
         return false;

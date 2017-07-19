@@ -38,10 +38,10 @@ app.use(router);
   Date   :1/6/2016
  */
 
- app.get('/getContentDetails',function(req,res){
-  if(req.query['certificate_id'] && req.query['certificate_id'].trim() != '')
+ app.get('/getContentDetails',IsAuthenticated,function(req,res){
+  if(req.query['certificate_id'] && req.query['certificate_id'] != '')
   {
-  connection.query("SELECT cr.resource_id,cr.certificate_id,cr.resource_name,cr.description,count(question_id) as question FROM cs_resources as cr LEFT JOIN cs_questions AS cq ON cq.section_id = cr.resource_id where cr.certificate_id= "+req.query.certificate_id+" and cr.is_delete = 0 GROUP BY cq.section_id",
+     connection.query("SELECT cr.resource_id,cr.certificate_id,cr.resource_name,cr.description,TIME_TO_SEC(cr.test_time)/60 as test_time,cr.points,cr.web_image,count(question_id) as question FROM cs_resources as cr LEFT JOIN cs_questions AS cq ON cq.section_id = cr.resource_id and cq.is_deletable = 0 where cr.certificate_id= "+req.query.certificate_id+" and cr.is_delete = 0 GROUP BY cr.resource_id",
       function(err, contentdata) {
           if(contentdata && contentdata.length>0){
             res.status(200).json({"status":1,'message':'content details','content' : contentdata });
@@ -60,7 +60,7 @@ app.use(router);
   Desc   : Get content by id
   Date   :5/6/2016
  */
-app.get('/getContentById',function(req,res){
+app.get('/getContentById',IsAuthenticated,function(req,res){
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
     connection.query("SELECT * FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
@@ -82,39 +82,39 @@ app.get('/getContentById',function(req,res){
   Desc   : create content
   Date   :2/6/2016
  */
-app.post('/createContent',function(req, res){
-      //delete req.body["student_confirm_password"];
-      console.log('Inside create content'+req.body);
-       if(req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
-         && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
-         && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'] != '')
-        {
+app.post('/createContent',IsAuthenticated,function(req, res){
+    //delete req.body["student_confirm_password"];
+    console.log('Inside create content'+req.body);
+     if(req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
+       && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
+       && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added'] != '')
+      {
 
-        req.body.date_added=moment().format('YYYY-MM-DD');
-        req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
-        connection.query('SELECT * FROM cs_resources where resource_name=?',req.body['resource_name'],
-          function(err, rows) {
-              if (err) {
-                throw err;
-              }
-              else if(rows.length>0){
-                res.status(303).json({"status":0,'message': 'Content Name already exists. Please enter different content name.','code': 'Content Exists'});
-              }else{
-                connection.query("INSERT INTO `cs_resources` SET ?",req.body,function (err, results) {
-                   if (err) {
-                    res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
-                   }else{
+      req.body.date_added=moment().format('YYYY-MM-DD');
+      req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
+      connection.query('SELECT * FROM cs_resources where resource_name=?',req.body['resource_name'],
+        function(err, rows) {
+            if (err) {
+              throw err;
+            }
+            else if(rows.length>0){
+              res.status(303).json({"status":0,'message': 'Content Name already exists. Please enter different content name.','code': 'Content Exists'});
+            }else{
+              connection.query("INSERT INTO `cs_resources` SET ?",req.body,function (err, results) {
+                 if (err) {
+                  res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
+                 }else{
 
-                    res.status(200).json({"status":1,'message': 'Content created Successfully' ,'code': 'SUCCESS'});
-                   }
-                });
-              }
-          });
-     }
-    else
-    {
-      res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
-    }
+                  res.status(200).json({"status":1,'message': 'Content created Successfully' ,'code': 'SUCCESS'});
+                 }
+              });
+            }
+        });
+   }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
 
 });
 /*
@@ -122,7 +122,7 @@ app.post('/createContent',function(req, res){
   Desc   : update content
   Date   :5/6/2016
  */
-app.post('/updateContent',function(req, res){
+app.post('/updateContent',IsAuthenticated,function(req, res){
        if(req.body['resource_id'] && req.body['resource_id'] != '' && req.body['certificate_id'] && req.body['certificate_id'] != '' && req.body['resource_name'] && req.body['resource_name'].trim() != ''
          && req.body['description'] && req.body['description'].trim() != '' && req.body['url_link'] && req.body['url_link'].trim() != ''
          && req.body['web_image'] && req.body['web_image'].trim() != '' && req.body['id_added'] && req.body['id_added']!= '')
@@ -160,7 +160,7 @@ app.post('/updateContent',function(req, res){
   Desc   : Delete content
   Date   : 5/6/2016
  */
-app.get('/deleteContent',function(req,res){
+app.get('/deleteContent',IsAuthenticated,function(req,res){
   console.log(req.query);
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
@@ -208,16 +208,14 @@ var upload = multer({ //multer settings
 
 
 /** API path that will upload the files */
-app.post('/uploadDocument', function(req, res) {
+app.post('/uploadDocument', IsAuthenticated, function(req, res) {
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});
     }else{
       res.status(200).json({'status':1,'message':'File Uploaded Successfully','code': 'SUCCESS','filename': req.file.filename});
     }
-
   });
 });
-
 
 module.exports = app;

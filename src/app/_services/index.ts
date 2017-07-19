@@ -4,3 +4,6 @@ export * from './certificate.service';
 export * from './student.service';
 export * from './content.service';
 export * from './datafilter.service';
+export * from './question.service';
+export * from './httpextend.service';
+export * from './xhrbackend.service';

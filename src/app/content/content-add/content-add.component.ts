@@ -17,7 +17,8 @@ export class ContentAddComponent implements OnInit {
   contentData : any = {};
   contentID : string;
   public errorMessage : String;
-  public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/upload', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
+  public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/content/uploadDocument', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml', 'application/pdf', 'application/msword', 'application/vnd.ms-excel', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+],
    maxFileSize: 10*1024*1024});
 
   constructor(private contentService : ContentService , private toastyService : ToastyService, private router:Router, private route:ActivatedRoute) {

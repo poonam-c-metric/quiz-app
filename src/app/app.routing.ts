@@ -19,6 +19,8 @@ import { AddstudentComponent } from './addstudent/addstudent.component';
 import { ContentAddComponent } from './content/content-add/content-add.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { AddQuestionComponent } from './question/add-question/add-question.component';
+import { ExaminationComponent } from './examination/examination.component';
 
 const appRoutes: Routes = [
     { path: '', component: DashboardComponent, canActivate: [AuthGuard]
@@ -78,8 +80,21 @@ const appRoutes: Routes = [
         {
             path : 'publish',
             component: PublishComponent
-        },{
-            path : 'question',
+        },
+        {
+            path : 'questions/insert',
+            component: AddQuestionComponent
+        },
+        {
+            path : 'questions/update/:question_id',
+            component: AddQuestionComponent
+        },
+        {
+            path : 'questions/:content_id',
+            component: QuestionComponent
+        },
+        {
+            path : 'questions',
             component: QuestionComponent
         },
         {
@@ -106,6 +121,7 @@ const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'resetPassword', component: ResetPasswordComponent },
+    { path: 'examination/:content_id', component: ExaminationComponent },
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
 ];

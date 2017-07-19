@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { Directive } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule , RequestOptions , XHRBackend } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -13,7 +13,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
 import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService } from './_services/index';
+import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
@@ -40,6 +40,11 @@ import { ContentAddComponent } from './content/content-add/content-add.component
 import { TrimValueAccessorModule } from 'ng-trim-value-accessor';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { AddQuestionComponent } from './question/add-question/add-question.component';
+import { DropdownModule } from "ng2-dropdown";
+import { Ng2DragDropModule } from 'ng2-drag-drop';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ExaminationComponent } from './examination/examination.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +69,9 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     ContentAddComponent,
     DataFilterPipe,
     ResetPasswordComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    AddQuestionComponent,
+    ExaminationComponent
   ],
   imports: [
     BrowserModule,
@@ -77,21 +84,25 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     UiSwitchModule,
     DataTableModule,
     TrimValueAccessorModule,
+    DropdownModule,
+    Ng2DragDropModule,
     ToastyModule.forRoot(),
-    RecaptchaModule.forRoot()
+    RecaptchaModule.forRoot(),
+    TimepickerModule.forRoot()
   ],
   providers: [
-        AuthGuard,
-        AuthenticationService,
-        UserService,
-        CertificateService,
-        StudentService,
-        ContentService,
-        {provide: LocationStrategy, useClass: HashLocationStrategy}
-      ],
-  bootstrap: [AppComponent]
+    AuthGuard,
+    AuthenticationService,
+    UserService,
+    CertificateService,
+    StudentService,
+    ContentService,
+    QuestionService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: RequestOptions, useClass: DefaultRequestOptions },
+    { provide: XHRBackend, useClass: MyXHRBackend }
+   ],
+    bootstrap: [AppComponent]
 })
-
-
 
 export class AppModule { }

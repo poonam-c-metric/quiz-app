@@ -1,7 +1,41 @@
+<!--
+  Author : Poonam Gokani
+  Desc   : UI for preview test which display all content data and test functionality
+  Date   : 11/07/2017
+-->
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
-        	Inside Preview Component
-        </div>
+    	<div class="row">
+	    	<div class="col-md-6" *ngFor="let contentdata of contentlistData">
+	    		<div class="card card-stats" >
+	    			<div class="card-header" data-background-color="purple">
+                        <h4 class="title">{{contentdata.resource_name}}</h4>
+                    </div>
+                    <div class="card-content">
+                    	Points: {{contentdata.points}}
+                    	<br/>
+                    	Time: {{contentdata.test_time}}
+                    	<br/>
+	    				<img src="assets/icons/{{contentdata.web_image}}" style="height:100px;width:100px;text-align:center"/>
+	    				<br/>
+	    				{{contentdata.description}}
+
+                    </div>
+                    <div class="card-footer">
+                    	<div class="stats">
+                            <div class="col-lg-5 col-md-6 col-sm-6">
+                            	<a class="btn btn-link">View</a>
+                            </div>
+                            <div class="col-lg-5 col-md-6 col-sm-6">
+                            	<a class="btn btn-link"
+                            	[routerLink]="['/examination',contentdata.resource_id]"
+                            	target="_blank">Test
+                            	</a>
+                            </div>
+                        </div>
+                    </div>
+	    		</div>
+	        </div>
+    	</div>
     </div>
 </div>
