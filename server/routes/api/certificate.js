@@ -41,11 +41,11 @@ app.get('/getCertificateDetails',IsAuthenticated,function(req,res){
           if(certdata && certdata.length>0){
             res.status(200).json({'status':1,'message':'certificate','certificate' : certdata });
           }else{
-            res.status(401).json({'status':0,'message': 'No Certificate Data, Create new one' ,'code': 'Data not Exist'});
+            res.status(200).json({'status':0,'message': 'No Certificate Data, Create new one' ,'code': 'Data not Exist'});
           }
       })
   }else{
-    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+    res.status(200).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 });
 

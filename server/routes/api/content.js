@@ -77,6 +77,31 @@ app.get('/getContentById',IsAuthenticated,function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 });
+
+ /*
+  Author : Poonam Gokani
+  Desc   : Get testime by contentid
+  Date   : 25/07/2017
+ */
+app.get('/getTesttimeById',function(req,res){
+  if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
+  {
+    connection.query("SELECT test_time FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
+      function(err, contentdata) {
+        console.log(contentdata);
+        if(contentdata && contentdata.length>0){
+          res.status(200).json({"status":1,'message':'content data','test_time' : contentdata[0]['test_time'] });
+        }else{
+          res.status(200).json({"status":0,'message': 'Oops! Something went wrong!!' ,'code': 'Invalid Details'});
+        }
+      })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+});
+
 /*
   Author : Niral Patel
   Desc   : create content

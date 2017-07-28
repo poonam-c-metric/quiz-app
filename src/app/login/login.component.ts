@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import { AuthenticationService , UserService } from '../_services/index';
 import {ToastyService, ToastyConfig} from 'ng2-toasty';
-
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
@@ -35,7 +33,7 @@ export class LoginComponent implements OnInit {
         .subscribe(
             data => {
                 console.log('login successful');
-                this.router.navigate(['/']);
+                this.router.navigate(['/dashboard']);
             },
             error => {
                 console.log('Inside Error');

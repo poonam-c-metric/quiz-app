@@ -12,7 +12,7 @@ import { ToastyService, ToastyConfig } from 'ng2-toasty';
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
     constructor(private router : Router, private toastyService:ToastyService) {
-      this.router.events.subscribe(path => {
+      /*this.router.events.subscribe(path => {
         let current = path['url'];
         let mainmenu = (<HTMLScriptElement[]><any>document.getElementById("MainMenu").querySelectorAll('a'));
         for (let elem of mainmenu) {
@@ -20,7 +20,7 @@ export class SidebarComponent implements OnInit {
            // $(elem).addClass('active');
           }
         }
-      });
+      });*/
     }
 
     ngOnInit() {

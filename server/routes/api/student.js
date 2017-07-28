@@ -38,8 +38,8 @@ app.use(router);
   Date   :30/6/2016
  */
 app.post('/createStudent', IsAuthenticated, function(req, res){
-      delete req.body["student_confirm_password"];
-       if(req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
+       delete req.body["student_confirm_password"];
+      if(req.body['student_first_name'] && req.body['student_first_name'].trim() != '' && req.body['student_last_name'] && req.body['student_last_name'].trim() != ''
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
       {
         req.body['student_password'] = common.encrypt(req.body['student_password']);
@@ -53,6 +53,11 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
               else if(rows.length>0){
                 res.status(303).json({"status":0,'message': 'Student already present in current certificate programme','code': 'Student Exists'});
               }else{
+                var tokenData = {
+                  emailId: req.body.member_active_email
+                };
+                var token = jwt.sign(tokenData, privateKey);
+                req.body['accessToken'] = token;
                 connection.query("INSERT INTO `cs_students` SET ?",req.body,function (err, results) {
                    if (err) {
                     console.log(err.message);
@@ -61,14 +66,9 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
                       if (req.body["is_email_active"] == true)
                       {
                         req.body['student_password'] = common.decrypt(req.body['student_password']);
-                        var tokenData = {
-                            emailId: req.body.member_active_email
-                        };
-                        var token = jwt.sign(tokenData, privateKey);
-                        req.body['accessToken'] = token;
                         sendStudentConfirmationEmail(req.body,results.insertId);
                       }
-                    res.status(200).json({"status":1,'message': 'Student created Successfully' ,'code': 'SUCCESS'});
+                      res.status(200).json({"status":1,'message': 'Student created Successfully' ,'code': 'SUCCESS'});
                    }
                 });
               }

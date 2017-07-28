@@ -1,0 +1,43 @@
+<!--
+  Author : Poonam Gokani
+  Desc   : UI for Student Dashboard
+  Date   : 20/07/2017
+-->
+<div id="examination">
+	<nav class="navbar navbar-default headerStyle">
+		<div class="container-fluid">
+		    <div class="navbar-header">
+		      <div class="row">
+		      	<div class="col-md-4"><b>{{studentDetails.student_first_name}}
+		      		{{studentDetails.student_last_name}}</b></div>
+		      	<div class="col-md-4"><b>{{certificateData.certificate_name}}</b></div>
+		      	<div class="col-md-4"><b>
+					<ul class="nav navbar-nav navbar-right navbar-user" style="margin-right:50px;">
+				        <li>
+				           <a title="Home">
+				               <i class="fa fa-home std-header" [routerLink]="['/student/dashboard']"></i>
+				           </a>
+				        </li>
+				        <li>
+				           <a class="std-header-menu" title="Change Profile" [routerLink]="['/student/updateprofile']">
+				              <i class="fa fa-user std-header"></i>
+				           </a>
+				        </li>
+				        <li>
+				           <a class="std-header-menu" title="Change Password" [routerLink]="['/student/changepassword']">
+				              <i class="fa fa-pencil-square-o std-header"></i>
+				           </a>
+				        </li>
+				        <li>
+				        	<a class="std-header-menu" title="Logout" (click)="logoutStudent()" href="javascript:void(0);">
+				           		<i class="fa fa-sign-out std-header"></i>
+				            </a>
+				        </li>
+				    </ul>
+		      	</b></div>
+		      </div>
+		    </div>
+		</div>
+	</nav>
+	<router-outlet></router-outlet>
+</div>

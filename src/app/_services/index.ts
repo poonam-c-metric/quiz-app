@@ -7,3 +7,4 @@ export * from './datafilter.service';
 export * from './question.service';
 export * from './httpextend.service';
 export * from './xhrbackend.service';
+export * from './student-module.service';

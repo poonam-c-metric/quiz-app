@@ -1,4 +1,4 @@
-var jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken-refresh');
 var crypto = require('crypto');
 var  algorithm = 'aes-256-ctr';
 var privateKey = 'c-metricsolution';
@@ -20,10 +20,20 @@ exports.encrypt = function(password) {
 
 IsAuthenticated = function(req,res,next){
   jwt.verify(req.headers['authorization'], privateKey, function(err, decoded) {
+    console.log(decoded);
     if(decoded){
+      console.log(decoded);
       next();
     }else{
-      res.status(401).json({'status':0,'message': 'Unauthorized User' ,'code': 'UnAuthorized'});
+      /*
+        Desc: Refresh token Code
+        Date: 28/07/2017
+      */
+      //var originalDecoded = jwt.decode(req.headers['authorization'], {complete: true});
+      //var refreshed = jwt.refresh(originalDecoded, (Date.now() / 1000) + 60, privateKey);
+      //req.session.accessToken = refreshed;
+      //console.log('Token refreshed'+ refreshed);
+      res.status(401).json({'status':0,'message': 'Token Expired' ,'code': 'UnAuthorized'});
     }
   });
 }

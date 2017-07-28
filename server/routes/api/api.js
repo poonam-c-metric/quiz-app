@@ -4,7 +4,7 @@ var cookieParser = require('cookie-parser');
 var router = express.Router();
 var connection = require('../connection.js');
 var mailer = require('../mailer.js');
-var jwt    = require('jsonwebtoken');
+var jwt    = require('jsonwebtoken-refresh');
 var common = require('../common.js');
 var moment = require('moment');
 var https = require('https');
@@ -15,6 +15,7 @@ connection.connect();
 
 var privateKey = 'c-metricsolution';
 var SECRET = "6Le8ySAUAAAAANH9A_xJV0nDyyYZN0P54XyZRUWA";
+var token = "";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -114,10 +115,12 @@ if(req.body['username'] && req.body['username'].trim() != '' && req.body['passwo
     function(err, user) {
         if(user && user.length>0){
           var tokenData = {
-            emailId: user.member_active_email
+            emailId: user.member_active_email,
+            exp : (Date.now() / 1000) + 86400
           };
-          var token = jwt.sign(tokenData, privateKey);
+          token = jwt.sign(tokenData, privateKey);
           req.session.accessToken = token;
+          user[0].accessToken = token;
           res.status(200).json({'status':1, 'message':"Login successfully",'user' : user[0] }); //, 'token': token
         }else{
           res.status(401).json({'status':0,'message': 'Username or Password is incorrect' ,'code': 'Invalid Credentials'});
@@ -133,7 +136,7 @@ else
 /*Logout user*/
 app.get('/logoutUser',function(req,res){
   req.session.destroy();
-  res.status(200).json({'status':1,'message': 'Successfully Logout' ,'code': 'Success Logout'});;
+  res.status(200).json({'status':1,'message': 'Successfully Logout' ,'code': 'Success Logout'});
 });
 /*
   Author : Niral Patel
