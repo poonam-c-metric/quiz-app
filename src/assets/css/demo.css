@@ -131,7 +131,7 @@ my-app .main-panel .main-content .card{
     width: 80px;
     cursor: pointer;
 }
-#examination .headerStyle{
+#examination .headerStyle, #publish .headerStyle{
     background-color: #ab47bc !important;
     color: #FFFFFF !important;
 }
@@ -163,4 +163,11 @@ my-app .main-panel .main-content .card{
 
 #examination .answer ul li.active{
     background-color: green;
+}
+#studentdashboard .card-stats .card-content{
+    text-align: left !important;
+}
+#publish .panel-cs {
+    border-color: #ab47bc !important;
+    border-size: 1px;
 }

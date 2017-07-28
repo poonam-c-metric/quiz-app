@@ -1,0 +1,38 @@
+<!--
+  Author : Poonam Gokani
+  Desc   : UI for Student Login and Forgot Password
+  Date   : 19/07/2017
+ -->
+<div class="col-md-6 col-md-offset-3">
+    <h2>Student Sign In</h2>
+    <form name="form" (ngSubmit)="f.form.valid && studentLogin()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{'has-error': f.submitted && !student_active_email.valid }">
+            <label for="student_active_email">Email Id</label>
+            <input type="text" class="form-control" name="student_active_email" [(ngModel)]="model.student_active_email" #student_active_email="ngModel" required email/>
+            <div *ngIf="f.submitted && !student_active_email.valid" class="help-block">Email Id is required</div>
+            <br/>
+            <div *ngIf="student_active_email.dirty && student_active_email.errors?.email" class="help-block">Please enter valid email address</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_password.valid }">
+            <label for="student_password">Password</label>
+            <input type="password" class="form-control" name="student_password" [(ngModel)]="model.student_password" #student_password="ngModel" required />
+            <div *ngIf="f.submitted && !student_password.valid" class="help-block">Password is required</div>
+        </div>
+        <div class="form-group">
+            <a data-toggle="modal" href="#forgetpasswordModal" (click)="forgetpasswordModal.open()"> Forgot password?</a>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Login</button>
+            <a [routerLink]="['/register']" class="btn btn-link">Register</a>
+        </div>
+    </form>
+</div>
+
+<modal #forgetpasswordModal title="Forgot Password?" cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && reset_password(emailid.value,forgetpasswordModal)">
+    <modal-content>
+        <label for="emailid">EmailId</label>
+        <input type="text" class="form-control" name="emailid" [(ngModel)]="model.emailid" #emailid="ngModel" required email/>
+        <div *ngIf="emailid.hasError('required')" class="help-block">EmailId is required</div>
+        <div *ngIf="emailid.errors?.email" class="help-block">Please enter valid email address</div>
+    </modal-content>
+</modal>

@@ -25,6 +25,7 @@ export class MyXHRBackend extends XHRBackend {
         window.location.hash = 'login';
       case 403:
         console.log('Redirected to login');
+
       default:
         return Observable.throw(response);
     }

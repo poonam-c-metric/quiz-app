@@ -49,6 +49,15 @@ export class ContentService {
     });
   }
 
+  getTestTime(contentid : Number){
+    console.log('Inside getTestTime');
+    return this.http.get("/api/content/getTesttimeById?resource_id="+contentid)
+     .map((response: Response) => {
+        let data = response.json();
+        return data;
+    });
+  }
+
   // private helper methods
   private jwt() {
       // create authorization header with jwt token

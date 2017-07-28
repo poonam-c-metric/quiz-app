@@ -1,5 +1,4 @@
 import { Routes, RouterModule } from '@angular/router';
-
 import { DashboardComponent } from './dashboard/index';
 import { LoginComponent } from './login/index';
 import { RegisterComponent } from './register/index';
@@ -21,9 +20,14 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { AddQuestionComponent } from './question/add-question/add-question.component';
 import { ExaminationComponent } from './examination/examination.component';
+import { StudentloginComponent } from './studentlogin/studentlogin.component';
+import { StudentdashboardComponent } from './studentdashboard/studentdashboard.component';
+import { StudentprofileComponent } from './studentprofile/studentprofile.component';
+import { StudenthomeComponent } from './studenthome/studenthome.component';
+import { StudentpasswordComponent } from './studentpassword/studentpassword.component';
 
 const appRoutes: Routes = [
-    { path: '', component: DashboardComponent, canActivate: [AuthGuard]
+    { path: '',  component: DashboardComponent, canActivate: [AuthGuard]
      ,  children:[
         {
          	path : 'certificate/insert',
@@ -121,7 +125,19 @@ const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'resetPassword', component: ResetPasswordComponent },
-    { path: 'examination/:content_id', component: ExaminationComponent },
+    { path: 'online-exam', component: StudentloginComponent },
+    { path: 'student', component: StudentdashboardComponent ,
+        children: [{
+            path : 'dashboard', component: StudenthomeComponent
+        },{
+            path : 'updateprofile', component: StudentprofileComponent
+        },{
+            path : 'changepassword', component: StudentpasswordComponent
+        },{
+            path: 'examination/:content_id', component: ExaminationComponent
+        }]
+    },
+    //{ path : 'student/updateprofile', component: StudentprofileComponent },
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
 ];

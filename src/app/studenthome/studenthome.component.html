@@ -1,0 +1,32 @@
+<!--
+  Author : Poonam Gokani
+  Desc   : UI to display student homepage
+  Date   : 24/07/2017
+ -->
+<div class="container" id="studentdashboard">
+	<div class="row" *ngFor="let key of contentKeys">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<div class="card card-stats">
+				<div class="card-content">
+					<div class="col-md-1">
+						<img src="assets/icons/{{contentlistData[key].web_image}}" style="height:50px;width:50px;text-align:center"/>
+					</div>
+					<div class="col-md-6">
+						<b>{{contentlistData[key].resource_name}} </b>
+						<br>
+						{{contentlistData[key].description}}
+					</div>
+					<div class="col-md-5">
+						<a class="btn btn-link">View</a>
+						<a class="btn btn-link"
+                          [routerLink]="['/student/examination',contentlistData[key].resource_id]"
+                          target="_blank">Test
+                        </a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+</div>

@@ -13,7 +13,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
 import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend } from './_services/index';
+import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend, StudentModuleService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
@@ -45,6 +45,11 @@ import { DropdownModule } from "ng2-dropdown";
 import { Ng2DragDropModule } from 'ng2-drag-drop';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { ExaminationComponent } from './examination/examination.component';
+import { StudentloginComponent } from './studentlogin/studentlogin.component';
+import { StudentdashboardComponent } from './studentdashboard/studentdashboard.component';
+import { StudentprofileComponent } from './studentprofile/studentprofile.component';
+import { StudenthomeComponent } from './studenthome/studenthome.component';
+import { StudentpasswordComponent } from './studentpassword/studentpassword.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +76,12 @@ import { ExaminationComponent } from './examination/examination.component';
     ResetPasswordComponent,
     ChangePasswordComponent,
     AddQuestionComponent,
-    ExaminationComponent
+    ExaminationComponent,
+    StudentloginComponent,
+    StudentdashboardComponent,
+    StudentprofileComponent,
+    StudenthomeComponent,
+    StudentpasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -98,6 +108,7 @@ import { ExaminationComponent } from './examination/examination.component';
     StudentService,
     ContentService,
     QuestionService,
+    StudentModuleService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: RequestOptions, useClass: DefaultRequestOptions },
     { provide: XHRBackend, useClass: MyXHRBackend }

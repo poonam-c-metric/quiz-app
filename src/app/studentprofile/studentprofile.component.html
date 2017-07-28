@@ -1,0 +1,29 @@
+<!--
+  Author : Poonam Gokani
+  Desc   : UI for Student Update Profile
+  Date   : 21/07/2017
+-->
+<div class="col-md-6 col-md-offset-3">
+    <h2>Update Profile</h2>
+    <form name="form" (ngSubmit)="f.form.valid && updateStudent()" #f="ngForm" novalidate>
+    	<div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_active_email.valid }">
+            <label for="student_active_email">Email Id *</label>
+            <input type="text" class="form-control" name="student_active_email" [(ngModel)]="studentData.student_active_email" [disabled]="true" #student_active_email="ngModel" required>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_first_name.valid }">
+            <label for="student_first_name">First Name:*</label>
+            <input type="text" class="form-control" name="student_first_name" [(ngModel)]="studentData.student_first_name" #student_first_name="ngModel" required />
+            <div *ngIf="f.submitted && !student_first_name.valid"  class="help-block">First Name is required</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_last_name.valid }">
+            <label for="student_last_name">Last Name:*</label>
+            <input type="text" class="form-control" name="student_last_name" [(ngModel)]="studentData.student_last_name" #student_last_name="ngModel" required />
+            <div *ngIf="f.submitted && !student_last_name.valid" class="help-block">Last Name is required</div>
+        </div>
+        <br>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+             <a [routerLink]="['/student/dashboard']" class="btn btn-link">Cancel</a>
+        </div>
+    </form>
+</div>
