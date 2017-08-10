@@ -171,3 +171,7 @@ my-app .main-panel .main-content .card{
     border-color: #ab47bc !important;
     border-size: 1px;
 }
+#publish .card-content{
+    padding : 15px 0;
+    text-align : center;
+}

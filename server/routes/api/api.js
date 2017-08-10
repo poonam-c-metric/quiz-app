@@ -116,7 +116,7 @@ if(req.body['username'] && req.body['username'].trim() != '' && req.body['passwo
         if(user && user.length>0){
           var tokenData = {
             emailId: user.member_active_email,
-            exp : (Date.now() / 1000) + 86400
+            //exp : (Date.now() / 1000) + 120
           };
           token = jwt.sign(tokenData, privateKey);
           req.session.accessToken = token;
@@ -252,7 +252,6 @@ app.post('/changePassword', IsAuthenticated, function(req,res){
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
-
 
 // Helper function to make API call to recatpcha and check response
 function verifyRecaptcha(key, callback) {

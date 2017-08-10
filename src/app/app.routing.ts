@@ -2,7 +2,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/index';
 import { LoginComponent } from './login/index';
 import { RegisterComponent } from './register/index';
-import { AuthGuard } from './_guards/index';
+import { AuthGuard , StudentAuthGuard} from './_guards/index';
 import { CertificateComponent } from './certificate/certificate.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
@@ -25,6 +25,7 @@ import { StudentdashboardComponent } from './studentdashboard/studentdashboard.c
 import { StudentprofileComponent } from './studentprofile/studentprofile.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { StudentpasswordComponent } from './studentpassword/studentpassword.component';
+import { StudentResetPasswordComponent } from './student-reset-password/student-reset-password.component';
 
 const appRoutes: Routes = [
     { path: '',  component: DashboardComponent, canActivate: [AuthGuard]
@@ -40,10 +41,6 @@ const appRoutes: Routes = [
         {
             path : 'certificate/update',
             component: CertificateComponent
-        },
-        {
-            path : '',
-            component: HomeComponent
         },
         {
             path : 'dashboard',
@@ -120,13 +117,17 @@ const appRoutes: Routes = [
         {
             path : 'changepassword',
             component: ChangePasswordComponent
+        },
+        {
+            path : '',
+            component: HomeComponent
         }]
     },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'resetPassword', component: ResetPasswordComponent },
     { path: 'online-exam', component: StudentloginComponent },
-    { path: 'student', component: StudentdashboardComponent ,
+    { path: 'student', component: StudentdashboardComponent , canActivate: [StudentAuthGuard],
         children: [{
             path : 'dashboard', component: StudenthomeComponent
         },{
@@ -137,7 +138,7 @@ const appRoutes: Routes = [
             path: 'examination/:content_id', component: ExaminationComponent
         }]
     },
-    //{ path : 'student/updateprofile', component: StudentprofileComponent },
+    { path : 'student/resetPassword', component: StudentResetPasswordComponent },
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
 ];

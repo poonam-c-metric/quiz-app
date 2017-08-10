@@ -20,9 +20,7 @@ exports.encrypt = function(password) {
 
 IsAuthenticated = function(req,res,next){
   jwt.verify(req.headers['authorization'], privateKey, function(err, decoded) {
-    console.log(decoded);
     if(decoded){
-      console.log(decoded);
       next();
     }else{
       /*
@@ -33,7 +31,8 @@ IsAuthenticated = function(req,res,next){
       //var refreshed = jwt.refresh(originalDecoded, (Date.now() / 1000) + 60, privateKey);
       //req.session.accessToken = refreshed;
       //console.log('Token refreshed'+ refreshed);
-      res.status(401).json({'status':0,'message': 'Token Expired' ,'code': 'UnAuthorized'});
+      //res.status(401).json({'status':0,'message': 'Token Expired' ,'code': 'UnAuthorized'});
+      console.log('Inside else token expired');
     }
   });
 }

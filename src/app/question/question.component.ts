@@ -63,7 +63,7 @@ export class QuestionComponent implements OnInit {
           data => {
             if(data && data['testdata']!=undefined){
               console.log(data['testdata']);
-              if(data['testdata']['test_time']!=''){
+              if(data['testdata']['test_time']!='' && data['testdata']['test_time']!=null){
                 this.testSetting.limit_testtime = true;
                 let testtime = data['testdata']['test_time'].split(":");
                 this.testSetting.testtime.setHours(testtime[0],testtime[1]);

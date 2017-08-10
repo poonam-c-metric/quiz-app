@@ -4,7 +4,7 @@
   Date   : 10/07/2017
  */
 
-import {XHRBackend, Request, XHRConnection, Response, RequestOptions, ConnectionBackend} from '@angular/http';
+import {XHRBackend, Request, XHRConnection, Response, RequestOptions, ConnectionBackend, Http} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -22,10 +22,10 @@ export class MyXHRBackend extends XHRBackend {
   processResponse(response : Response){
     switch (response.status) {
       case 401:
+        localStorage.remove('currentUser');
         window.location.hash = 'login';
       case 403:
         console.log('Redirected to login');
-
       default:
         return Observable.throw(response);
     }
