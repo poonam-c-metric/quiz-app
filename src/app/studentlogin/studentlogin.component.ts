@@ -20,7 +20,7 @@ export class StudentloginComponent implements OnInit {
   constructor(private router:Router, private toastyService : ToastyService, private studentModuleService : StudentModuleService) { }
 
   ngOnInit() {
-
+    console.log('Student Login Component');
   }
 
 /*
@@ -29,6 +29,7 @@ export class StudentloginComponent implements OnInit {
   Date   : 19/07/2017
  */
   studentLogin(){
+
     this.studentModuleService.login(this.model.student_active_email, this.model.student_password)
         .subscribe(
             data => {
@@ -44,5 +45,30 @@ export class StudentloginComponent implements OnInit {
                   theme: "material"
               });
             });
-   }
+  }
+
+  resetPassword(emailid,fpmodal){
+    this.studentModuleService.resetPassword(emailid)
+        .subscribe(
+            data => {
+              fpmodal.close();
+              this.toastyService.success({
+                  title: data.code,
+                  msg: data.message,
+                  showClose: true,
+                  timeout: 5000,
+                  theme: "material"
+              });
+            },
+            error => {
+              let err = error.json();
+              this.toastyService.error({
+                  title: err.code,
+                  msg: err.message,
+                  showClose: true,
+                  timeout: 5000,
+                  theme: "material"
+              });
+            });
+    }
 }

@@ -43,13 +43,13 @@
  <modal #chooseIconModal title="Select Icon" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="useIcon(chooseIconModal)" id="chooseiconmodal">
     <modal-content>
         <input #video name="web_image" [checked]="contentData.web_image == video.value" value="2-Video.png" type="radio" (click)="contentData.web_image = video.value">
-        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/video.png);">Video</label>
+        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Video.png);">Video</label>
 
         <input #other name="web_image" [checked]="contentData.web_image==other.value" value='5-Other.png' type="radio" (click)="contentData.web_image = other.value">
-        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/other.png);">Other</label>
+        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Other.png);">Other</label>
 
         <input #general name="web_image" [checked]="contentData.web_image==general.value" value='1-General.png' type="radio" (click)="contentData.web_image = general.value">
-        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/general.png);">General</label>
+        <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/General.png);">General</label>
 
         <input #image name="web_image" [checked]="contentData.web_image==image.value" value='3-Image.png' type="radio" (click)="contentData.web_image = image.value">
         <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Image.png);">Image</label>

@@ -32,7 +32,7 @@ export class AddstudentComponent implements OnInit {
 
   /* Get student detail by id*/
   getStudentById(stuid){
-     this.studentService.getStudentById(stuid)
+    this.studentService.getStudentById(stuid)
       .subscribe(
         data => {
             this.studentData = data['student'][0];

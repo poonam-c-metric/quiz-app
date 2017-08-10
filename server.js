@@ -12,6 +12,7 @@ const studentApi = require('./server/routes/api/student');
 const contentApi = require('./server/routes/api/content');
 const questionApi = require('./server/routes/api/question');
 const studentModuleApi = require('./server/routes/api/studentmodule');
+const publishApi = require('./server/routes/api/publish');
 const app = express();
 
 app.use(cors());
@@ -30,6 +31,7 @@ app.use('/api', studentApi);
 app.use('/api/content', contentApi);
 app.use('/api/question', questionApi);
 app.use('/api/studentmodule', studentModuleApi);
+app.use('/api/publish', publishApi);
 
 // Catch all other routes and return the index file
 app.get('/', (req, res) => {

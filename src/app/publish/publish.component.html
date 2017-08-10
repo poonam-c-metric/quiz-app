@@ -8,12 +8,26 @@
 	    <div class="container-fluid">
 	        <div class="row">
 	        	<div class="card card-stats">
-	            	<div class="card-header">PUBLISH CERTIFICATION</div>
+	            	<div class="card-header headerStyle">PUBLISH CERTIFICATION</div>
 	            	<div class="card-content">
-	                	<div style="padding:15px 0; text-align:center;">
-	                       <p>Click the "Publish" button to publish the certification.</p><a class="btn btn-link" (click)="certificatePublish()">Publish
+	            		<div *ngIf="resourceCount == 0">
+	            			No Resource Please create new resource
+	            			<a class="btn-link" [routerLink]="['/content/insert']">Create Resource</a>
+	            		</div>
+	            		<div *ngIf="resourceCount > 0 && !questionFlag">
+	            			No Questions Please add some questions
+	            			<a class="btn-link" [routerLink]="['/questions/insert']">Insert Question</a>
+	            		</div>
+	                	<div *ngIf="certificatePublishFlag == 0 && resourceCount > 0 && questionFlag" style="padding:15px 0; text-align:center;">
+	                       <p>Click the "Publish" button to publish the certification.</p><a class="btn btn-link" (click)="publishCertificate()">Publish
 	                   	   </a>
 	                	</div>
+
+	                	<div *ngIf="certificatePublishFlag == 1" style="padding:15px 0; text-align:center;">
+	                       <a class="btn btn-link" (click)="unpublishCertificate()">		UnPublish
+	                   	   </a>
+	                	</div>
+
 	            	</div>
 	        	</div>
 	        </div>

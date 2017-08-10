@@ -86,7 +86,7 @@ app.get('/getContentById',IsAuthenticated,function(req,res){
 app.get('/getTesttimeById',function(req,res){
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
-    connection.query("SELECT test_time FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
+    connection.query("SELECT TIME_TO_SEC(test_time)/60 as test_time FROM cs_resources where resource_id=?" , [req.query['resource_id']] ,
       function(err, contentdata) {
         console.log(contentdata);
         if(contentdata && contentdata.length>0){
@@ -186,7 +186,6 @@ app.post('/updateContent',IsAuthenticated,function(req, res){
   Date   : 5/6/2016
  */
 app.get('/deleteContent',IsAuthenticated,function(req,res){
-  console.log(req.query);
   if(req.query['resource_id'] && req.query['resource_id'].trim() != '')
   {
     var status = {"is_delete": '1'};
@@ -233,7 +232,7 @@ var upload = multer({ //multer settings
 
 
 /** API path that will upload the files */
-app.post('/uploadDocument', IsAuthenticated, function(req, res) {
+app.post('/uploadDocument', function(req, res) {
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});

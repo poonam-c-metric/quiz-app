@@ -164,7 +164,7 @@ var upload = multer({ //multer settings
 
 
 /** API path that will upload the files */
-app.post('/upload', IsAuthenticated, function(req, res) {
+app.post('/upload', function(req, res) {
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});

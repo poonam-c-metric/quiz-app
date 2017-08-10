@@ -12,8 +12,8 @@ import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
-import { AuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend, StudentModuleService } from './_services/index';
+import { AuthGuard , StudentAuthGuard } from './_guards/index';
+import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend, StudentModuleService, PublishService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
@@ -50,6 +50,7 @@ import { StudentdashboardComponent } from './studentdashboard/studentdashboard.c
 import { StudentprofileComponent } from './studentprofile/studentprofile.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { StudentpasswordComponent } from './studentpassword/studentpassword.component';
+import { StudentResetPasswordComponent } from './student-reset-password/student-reset-password.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import { StudentpasswordComponent } from './studentpassword/studentpassword.comp
     StudentdashboardComponent,
     StudentprofileComponent,
     StudenthomeComponent,
-    StudentpasswordComponent
+    StudentpasswordComponent,
+    StudentResetPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -102,6 +104,7 @@ import { StudentpasswordComponent } from './studentpassword/studentpassword.comp
   ],
   providers: [
     AuthGuard,
+    StudentAuthGuard,
     AuthenticationService,
     UserService,
     CertificateService,
@@ -109,6 +112,7 @@ import { StudentpasswordComponent } from './studentpassword/studentpassword.comp
     ContentService,
     QuestionService,
     StudentModuleService,
+    PublishService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: RequestOptions, useClass: DefaultRequestOptions },
     { provide: XHRBackend, useClass: MyXHRBackend }

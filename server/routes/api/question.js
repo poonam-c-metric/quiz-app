@@ -13,7 +13,7 @@ var https = require('https');
 
 const app = express();
 
-connection.connect();
+//connection.connect();
 
 var privateKey = 'c-metricsolution';
 var SECRET = "6Le8ySAUAAAAANH9A_xJV0nDyyYZN0P54XyZRUWA";
@@ -281,7 +281,7 @@ var upload = multer({ //multer settings
 
 
 /** API path that will upload the files */
-app.post('/uploadQuestion', IsAuthenticated, function(req, res) {
+app.post('/uploadQuestion', function(req, res) {
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});

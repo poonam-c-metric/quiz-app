@@ -107,7 +107,6 @@ app.post('/changeStudentPassword', function(req,res){
   Desc   : Webservice for save student answer
   Date   : 26/07/2017
  */
-
 app.post('/saveStudentAnswer', function(req,res){
   if(req.body['answers']){
     var answers = req.body['answers'];
@@ -127,15 +126,92 @@ app.post('/saveStudentAnswer', function(req,res){
     });
     connection.query("INSERT INTO `cs_student_answer` (stu_answer_id, answer_id, question_id, certificate_id, section_id, student_id, data_added, passfail) VALUES ?",[ans_arr],function (err1, results1) {
      if(err1) {
-        console.log('Error occured'+err1.message);
+        res.status(200).json({'status':0,'message' : err1.message , 'code' : 'ANSERROR'});
      }else{
-        console.log("Answer is inserted");
+        res.status(200).json({'status':1,'message' : 'Answers inserted successfully' , 'code' : 'SUCCESS'});
      }
     });
   } else {
     res.status(303).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
+
+/*
+  Author : Poonam Gokani
+  Desc   : Webservice for save student result
+  Date   : 04/08/2017
+ */
+app.post('/saveStudentResult', function(req,res){
+  if(req.body['resultdetails']){
+    connection.query("INSERT INTO `cs_std_section_result` SET ?;",[req.body['resultdetails']],function (err1, results1) {
+     if(err1) {
+       res.status(200).json({'status':0,'message' : err1.message , 'code' : 'ResultInsertionError'});
+     }else{
+       res.status(200).json({'status':1,'message' : 'Result inserted successfully' , 'code' : 'SUCCESS'});
+     }
+    });
+  } else {
+    res.status(303).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+})
+
+/*
+  Author : Poonam Gokani
+  Desc   : Webservice to reset student password (send reset link to student)
+  Date   : 31/07/2017
+ */
+app.post('/resetPassword',function(req,res){
+  if(req.body['emailId'] && req.body['emailId'].trim() != '')
+  {
+  connection.query("SELECT * FROM cs_students where student_active_email='"+req.body['emailId']+"'",{},
+    function(err, user) {
+        if(user && user.length>0){
+          sendResetPasswordMail(user[0]);
+          res.status(200).json({'status':1,'message' : 'Mail sent Successfully' , 'code' : 'SUCCESS'});
+        }else{
+          res.status(401).json({'status':1,'message': 'Email address or username does not exist.' ,'code': 'Invalid EmailID'});
+        }
+    })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+})
+
+/*
+  Author : Poonam Gokani
+  Desc   : Webservice to set new password for student
+  Date   : 31/7/2017
+ */
+app.post('/updateResetPassword',function(req,res){
+  console.log('Inside Update Reset Password');
+  console.log(req.body);
+  if(req.body['accessToken'] && req.body['accessToken'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
+  {
+    req.body['student_password'] = common.encrypt(req.body['student_password']);
+    connection.query("SELECT * FROM cs_students where accessToken='"+req.body['accessToken']+"'",{},
+      function(err, user) {
+          if(user && user.length>0){
+            connection.query('UPDATE cs_students SET ? WHERE ?', [{ student_password: req.body["student_password"] }, { accessToken: req.body["accessToken"] }],function(err , result){
+               if (err) {
+                res.status(200).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+               }else{
+                res.status(200).json({'status':1,'message' : 'Update password sucessfully and check mail in your email id.' , 'code' : 'SUCCESS'});
+                sendUpdateResetPasswordMail(user[0]);
+               }
+            });
+          }else{
+            res.status(401).json({'status':0,'message': 'Invalid url' ,'code': 'Invalid url'});
+          }
+      })
+    }
+  else
+  {
+    res.status(200).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+})
+
 
 /*
   Author : Poonam Gokani
@@ -163,4 +239,32 @@ function sendUpdateResetPasswordMail(student){
     res.send('Email sent: ' + success);
   });
 }
+
+/*
+  Author : Poonam Gokani
+  Desc   : Send reset password mail
+  Date   : 31/07/2017
+ */
+
+function sendResetPasswordMail(user){
+
+  var FROM_ADDRESS = 'support@Certspring.com';
+  var TO_ADDRESS = user.student_active_email;
+  var SUBJECT = 'Reset Password Link';
+
+  var html =  "This email has been sent as a request to reset our password<br><br>" +
+  "<a href='http://localhost:3000/#/student/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
+  "if you want to reset your password, if not, then ignore<br><br>"+
+  "Best regards,<br>The Certspring Team<br>" +
+  "support@Certspring.com";
+
+  mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
+    if(err){
+      throw new Error('Problem sending email to: ' + TO_ADDRESS);
+    }
+    // Yay! Email was sent, now either do some more stuff or send a response back to the client
+    res.send('Email sent: ' + success);
+  });
+}
+
 module.exports = app;
