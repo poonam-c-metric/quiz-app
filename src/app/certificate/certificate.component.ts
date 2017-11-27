@@ -1,3 +1,4 @@
+import { API_URL } from './../_guards/configure';
 import { Component, OnInit } from '@angular/core';
 import { Certificate } from '../_models/index';
 import { CertificateService } from '../_services/index'
@@ -6,7 +7,6 @@ import { ActivatedRoute , Router } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload';
 import { FileLikeObject } from 'ng2-file-upload';
 import { RequestOptions, Request, RequestMethod, Headers} from '@angular/http';
-
 
 @Component({
   selector: 'app-certificate',
@@ -21,7 +21,7 @@ export class CertificateComponent implements OnInit {
   public errorMessage : String;
   public ecommerce : number;
   public showAdvancedFlag : boolean = false;
-  public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/upload', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
+  public uploader : FileUploader = new FileUploader({url: API_URL + '/upload', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
    maxFileSize: 10*1024*1024});
   requests = [];
 
@@ -42,8 +42,11 @@ export class CertificateComponent implements OnInit {
   ngOnInit() {
     this.uploader.onWhenAddingFileFailed = (item, filter, options) => this.onWhenAddingFileFailed(item, filter, options);
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
-      let res = JSON.parse(response);
-      this.certificateData.certificate_logo = res.filename;
+      console.log(this.certificateData);
+      setTimeout(()=>{
+        let res = JSON.parse(response);
+        this.certificateData.certificate_logo = res.filename;
+      }, 1000);
     };
   }
 
@@ -69,9 +72,14 @@ export class CertificateComponent implements OnInit {
   }
 
   createCertificate(){
+    console.log('Inside Certificate Data');
+    console.log(this.certificateData);
     if(this.certificateID!='' && this.certificateID!=undefined){
       this.certificateData['id_edited'] = JSON.parse(localStorage.getItem('currentUser')).member_id;
       this.certificateData['is_active'] = 0;
+      if(this.certificateData['cert_cost']==""){
+        this.certificateData['cert_cost'] = 0;
+      }
       this.certificateService.updateCertificate(this.certificateData)
         .subscribe(
           data => {
@@ -128,7 +136,6 @@ export class CertificateComponent implements OnInit {
   }
 
   changeCertCost(newValue){
-    console.log('Inside changeCertCost'+ newValue);
     if(this.ecommerce){
       this.certificateData.cert_cost = 0;
     }
@@ -149,5 +156,6 @@ export class CertificateComponent implements OnInit {
             this.errorMessage = `Unknown error (filter is ${filter.name})`;
             console.log(this.errorMessage);
       }
-    }
+  }
+
 }

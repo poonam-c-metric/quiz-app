@@ -24,12 +24,15 @@ app.use(session({secret: privateKey ,resave: true, saveUninitialized: true ,cook
 app.use(router);
 
  app.use(function(req, res, next) { //allow cross origin requests
+  var API_URL = req.get('host');
   res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", API_URL);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
+
+
 /*
   Author : Poonam Gokani
   Desc   : Register and login api
@@ -75,7 +78,7 @@ function registerUser(req,res){
              if (err) {
               res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
              }else{
-              sendConfirmationEmail(req.body,results.insertId);
+              sendConfirmationEmail(req,results.insertId);
               req.session.accessToken = token;
               connection.query('SELECT * FROM cs_members where member_id=?',results.insertId,function(err1,resp1){
                 res.status(200).json({'status':1,'message':'Register successfully.','user':resp1[0]});
@@ -168,7 +171,6 @@ app.post('/resetPassword',function(req,res){
  */
 
 app.post('/updateUser', IsAuthenticated, function(req,res){
-
   if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != ''
      && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].trim() != '' && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].trim() != '')
   {
@@ -277,6 +279,10 @@ function verifyRecaptcha(key, callback) {
  */
 
 function sendConfirmationEmail(req,userid){
+  console.log(req.get('host'));
+  var API_URL = req.get('host');
+  console.log('API_URL:'+API_URL);
+  var req = req.body;
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = req.member_active_email;
   var SUBJECT = 'Registration Information';
@@ -284,10 +290,10 @@ function sendConfirmationEmail(req,userid){
     // relative to views/ directory - don't include extension!
   var RELATIVE_TEMPLATE_PATH = 'templates/confirm-email/index';
 
-  var html =  "<h1>Dear "+ req.member_first_name + " "+ req.member_last_name +",</h1><br><br>" +
+  var html =  "<h3>Dear "+ req.member_first_name + " "+ req.member_last_name +",</h3><br><br>" +
   "Thank you for registering with Certspring.<br><br>"+
   "In order to verify this email address and activate your account, please click here:<br><br>"+
-  "<a href='http://localhost:3000/#/active?userId="+userid+"&accessToken="+req.accessToken+"'>http://localhost:3000/#/active?userId="+userid+"&accessToken="+req.accessToken+"</a><br><br>"
+  "<a href=http://"+ API_URL +"'/#/active?userId="+userid+"&accessToken="+req.accessToken+"'>http://"+API_URL+"/#/active?userId="+userid+"&accessToken="+req.accessToken+"</a><br><br>"
   "Best regards,<br>" +
   "The Certspring Team<br>" +
   "support@Certspring.com";
@@ -309,13 +315,13 @@ function sendConfirmationEmail(req,userid){
  */
 
 function sendResetPasswordMail(user){
-
+  var API_URL = req.get('host');
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.member_active_email;
   var SUBJECT = 'Reset Password Link';
 
   var html =  "This email has been sent as a request to reset our password<br><br>" +
-  "<a href='http://localhost:3000/#/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
+  "<a href="+ API_URL +"#/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
   "if you want to reset your password, if not, then ignore<br><br>"+
   "Best regards,<br>The Certspring Team<br>" +
   "support@Certspring.com";

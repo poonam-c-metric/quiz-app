@@ -10,6 +10,8 @@ var jwt    = require('jsonwebtoken');
 var common = require('../common.js');
 var fs = require('fs');
 var https = require('https');
+var xlstojson = require("xls-to-json-lc");
+var xlsxtojson = require("xlsx-to-json-lc");
 
 const app = express();
 
@@ -26,7 +28,7 @@ app.use(router);
 
  app.use(function(req, res, next) { //allow cross origin requests
   res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", req.get('host'));
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Credentials", true);
   next();
@@ -110,7 +112,7 @@ app.use(router);
  /*
   Author : Niral Patel
   Desc   : Get question by id
-  Date   :9/6/2016
+  Date   : 9/6/2016
  */
 app.get('/getQuestionById', IsAuthenticated, function(req,res){
   if(req.query['question_id'] && req.query['question_id'].trim() != '')
@@ -120,10 +122,10 @@ app.get('/getQuestionById', IsAuthenticated, function(req,res){
 
           if(questiondata && questiondata.length>0){
             //get answer
-            connection.query("SELECT answer_id,question_id,answer_text,is_correct,date_added,id_added,date_added,is_active FROM cs_answers where question_id=?" , [req.query['question_id']] ,
+            // is_correct, - remove is_correct flag from answers data
+            connection.query("SELECT answer_id,question_id,answer_text,date_added,id_added,date_added,is_active FROM cs_answers where question_id=? order by answer_id" , [req.query['question_id']] ,
             function(err, answers) {
               if(answers && answers.length == 0){answers ={};}
-              console.log(answers);
               res.status(200).json({"status":1,'message':'question data','question' : questiondata,'answers':answers });
             });
 
@@ -140,10 +142,9 @@ app.get('/getQuestionById', IsAuthenticated, function(req,res){
 /*
   Author : Niral Patel
   Desc   : create question
-  Date   :2/6/2016
+  Date   : 2/6/2016
  */
 app.post('/createQuestion', IsAuthenticated, function(req, res){
-      console.log(req.body);
       if(req.body['certificate_id'] && req.body['certificate_id'].trim() != '' && req.body['question_text'] && req.body['question_text'].trim() != ''
          && req.body['section_id'] && req.body['section_id'].trim() != '' && req.body['answers'] && req.body['answers'] != ''
          && req.body['id_added'] && req.body['id_added'] != '')
@@ -171,7 +172,6 @@ app.post('/createQuestion', IsAuthenticated, function(req, res){
                     }
                     connection.query("INSERT INTO `cs_answers` SET ?",ans_arr,function (err1, results1) {
                      if (err1) {
-                        //res.status(303).json({"status":0,'message': err1.message.split(":")[1],'code': err1.code});
                         console.log('Error occured'+err1.message);
                      }else{
                         console.log("Answer is inserted");
@@ -188,6 +188,80 @@ app.post('/createQuestion', IsAuthenticated, function(req, res){
     }
 
 });
+
+/*
+  Author : Niral Patel
+  Desc   : update question
+  Date   : 9/6/2016
+ */
+app.post('/updateQuestion',function(req, res){
+    if(req.body['question_id'] && req.body['question_id'] != ''  && req.body['question_text'] && req.body['question_text'].trim() != ''
+       && req.body['old_answers'] && req.body['old_answers'] != ''
+       && req.body['id_edited'] && req.body['id_edited'] != '')
+      {
+        var answers = req.body['answers'];
+        var old_answers = req.body['old_answers'];
+        delete req.body["answers"];
+        delete req.body["old_answers"];
+        delete req.body["answers_available"];
+        req.body.date_edited = moment().format('YYYY-MM-DD');
+        req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
+        connection.query("Update `cs_questions` SET ? WHERE ?",[ req.body , { question_id : req.body.question_id }],function (err, results) {
+         if (err) {
+          console.log(err.message);
+          res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
+         }else{
+          if(answers)
+          {
+            var ans_arr=[];
+            answers.forEach(function(ansRes) {
+                var ans_arr = {
+                  "question_id":req.body['question_id'],
+                  "answer_text":ansRes.answer_text,
+                  "is_correct":ansRes.is_correct,
+                  "id_added":req.body['id_edited'],
+                  "date_added":moment().format('YYYY-MM-DD'),
+                  "ip_added":req.connection.remoteAddress.replace(/^.*:/, '')
+                }
+
+                connection.query("INSERT INTO `cs_answers` SET ?",ans_arr,function (err, results) {
+                 if (err) {
+                    res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
+                   }
+                });
+            });
+          }
+
+            if(old_answers)
+            {
+              var ans_old_arr=[];
+              old_answers.forEach(function(ansResust) {
+               var ans_old_arr = {
+                        "answer_text":ansResust.answer_text,
+                        "is_correct":ansResust.is_correct,
+                        "id_edited":req.body['id_edited'],
+                        "date_edited":moment().format('YYYY-MM-DD'),
+                        "ip_edited":req.connection.remoteAddress.replace(/^.*:/, '')
+                      }
+                      connection.query("Update `cs_answers` SET ? WHERE ?",[ ans_old_arr , { answer_id : ansResust.answer_id }],function (err, results) {
+                        if (err) {
+                        res.status(303).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
+                       }
+                      });
+                });
+            }
+
+          res.status(200).json({"status":1,'message': 'Question updated Successfully' ,'code': 'SUCCESS'});
+         }
+          });
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+
+});
+
 /*
   Author : Poonam Gokani
   Desc   : Set Test Configuration
@@ -275,21 +349,108 @@ var storage = multer.diskStorage({ //multers disk storage settings
     }
 });
 
-var upload = multer({ //multer settings
+var upload = multer({
+    storage: storage
+}).single('file');
+
+
+/*
+  Author : Poonam Gokani
+  Desc   : Upload Question data using excel
+  Date   : 18/08/2017
+*/
+  var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './src/uploads/question')
+    },
+    filename: function (req, file, cb) {
+        var datetimestamp = Date.now();
+        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+    }
+  });
+
+  var upload = multer({
     storage: storage
   }).single('file');
 
-
-/** API path that will upload the files */
-app.post('/uploadQuestion', function(req, res) {
-  upload(req,res,function(err){
-    if(err){
-      res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});
-    }else{
-      res.status(200).json({'status':1,'message':'File Uploaded Successfully','code': 'SUCCESS','filename': req.file.filename});
-    }
+/*
+  Author : Poonam Gokani
+  Desc   : Webservice to upload multiple questions using excel
+  Date   : 22/08/2017
+*/
+  app.post('/uploadMultipleQuestions', function(req, res) {
+    var exceltojson;
+    upload(req,res,function(err){
+        if(err){
+          res.status(200).json({"status":0,"error_code":1,"err_desc":err});
+        }
+        if(!req.file){
+          res.status(200).json({"status":0,"error_code":1,"err_desc":"No file passed"});
+          return;
+        }
+        if(req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xlsx'){
+            exceltojson = xlsxtojson;
+        } else {
+            exceltojson = xlstojson;
+        }
+        try {
+          exceltojson({
+              input: req.file.path,
+              output: null, //since we don't need output.json
+              lowerCaseHeaders:true
+          },function(err,result){
+            if(err) {
+              res.status(200).json({status:0, error_code:1, err_desc:"No file passed", data:null});
+            }
+            var questionData = {};
+            var answerData = {};
+            console.log(result);
+            result.forEach(function(value,key) {
+              questionData = {};
+              answerData = {};
+              questionData['question_text'] = result[key]['question_text'];
+              questionData['question_type'] = result[key]['question_type'];
+              questionData['question_marks'] = result[key]['question_marks'];
+              questionData['question_order'] = result[key]['question_order'];
+              questionData['is_active'] = result[key]['is_active'];
+              questionData['date_added'] = moment().format('YYYY-MM-DD');
+              questionData['ip_added'] = req.connection.remoteAddress.replace(/^.*:/, '');
+              questionData['id_added'] = req.body['id_added'];
+              questionData['certificate_id'] = req.body['certificate_id'];
+              questionData['section_id'] = req.body['section_id'];
+              connection.query("INSERT INTO `cs_questions` SET ?",questionData,function (err, results) {
+                if(err){
+                  console.log('Question not inserted:'+err.message);
+                  res.status(200).json({"status":0,'message': err.message.split(":")[1],'code': err.code});
+                } else {
+                  for(var i=0;i<result[key]['noofans'];i++){
+                    var j = i+1
+                    var is_correct = result[key]['answer_text_'+j].split('-')[0];
+                    var answer_text = result[key]['answer_text_'+j].split('-')[1];
+                    var ans_arr = {
+                      "question_id" : results.insertId,
+                      "answer_text" : answer_text,
+                      "is_correct" : is_correct,
+                      "id_added" : req.body['id_added'],
+                      "is_active" : result[key]['is_active'],
+                      "date_added" : moment().format('YYYY-MM-DD'),
+                      "ip_added" : req.connection.remoteAddress.replace(/^.*:/, '')
+                    }
+                    connection.query("INSERT INTO `cs_answers` SET ?",ans_arr,function (err1, results1) {
+                      if (err1) {
+                        console.log('Error occured'+err1.message);
+                      }else{
+                        console.log("Answer is inserted");
+                      }
+                    });
+                  }
+                }
+              });
+            });
+          });
+        } catch (e){
+          res.json({error_code:1,err_desc:"Corrupted excel file"});
+        }
+    })
   });
-});
-
-
 module.exports = app;

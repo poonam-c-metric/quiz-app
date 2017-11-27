@@ -1,7 +1,10 @@
+import { API_URL } from './../_guards/configure';
 import { Component, OnInit } from '@angular/core';
 import { QuestionService } from '../_services/index';
 import { ToastyService, ToastyConfig } from 'ng2-toasty';
 import { ActivatedRoute , Router } from '@angular/router';
+import { FileUploader } from 'ng2-file-upload';
+import { FileLikeObject } from 'ng2-file-upload';
 
 @Component({
   selector: 'app-question',
@@ -20,6 +23,16 @@ export class QuestionComponent implements OnInit {
   questionlistData : Object;
   questionDeleteID : number;
   contentID : string;
+  errorMessage : string;
+  public uploader : FileUploader = new FileUploader({url: API_URL+'/question/uploadMultipleQuestions',
+     autoUpload: true ,
+     allowedMimeType: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'],
+     maxFileSize: 10*1024*1024,
+     additionalParameter: {'certificate_id': localStorage.getItem('certificate_id'),
+                           'section_id': localStorage.getItem('content_id'),
+                           'id_added': JSON.parse(localStorage.getItem('currentUser')).member_id
+                          }});
+
 
   constructor(private questionService:QuestionService, private toastyService:ToastyService, private route: ActivatedRoute , private router:Router) { }
 
@@ -156,5 +169,27 @@ export class QuestionComponent implements OnInit {
               theme: "material"
             });
         });
+  }
+
+/*
+  Author : Poonam Gokani
+  Desc   : Function called when multiple question upload data failed
+  Date   : 18/08/2017
+*/
+  onWhenAddingFileFailed(item: FileLikeObject, filter: any, options: any) {
+    switch (filter.name) {
+      case 'fileSize':
+          this.errorMessage = `Maximum upload size exceeded (${item.size} of ${this.uploader.options.maxFileSize} allowed)`;
+          console.log(this.errorMessage);
+          break;
+      case 'mimeType':
+          const allowedTypes = this.uploader.options.allowedMimeType.join();
+          this.errorMessage = `Type "${item.type} is not allowed. Allowed types: "${allowedTypes}"`;
+          console.log(this.errorMessage);
+          break;
+      default:
+          this.errorMessage = `Unknown error (filter is ${filter.name})`;
+          console.log(this.errorMessage);
+    }
   }
 }

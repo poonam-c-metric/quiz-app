@@ -11,10 +11,8 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class AddstudentComponent implements OnInit {
 
-
   studentData : any = {};
   studentID : String;
-
   public errorMessage : String;
   public ecommerce : number;
   public showAdvancedFlag : boolean = false;
@@ -36,6 +34,7 @@ export class AddstudentComponent implements OnInit {
       .subscribe(
         data => {
             this.studentData = data['student'][0];
+            this.studentData['student_confirm_password'] = data['student'][0]['student_password'];
             if(this.studentData['cert_cost']!==0){
               this.ecommerce = 1;
             }

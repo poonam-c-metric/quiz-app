@@ -39,13 +39,15 @@ export class SidebarComponent implements OnInit {
            while (elements2.length) elements2[0].classList.remove('active');
            elem.target.classList.add('active');
         }else{
-            this.toastyService.warning({
-              title: 'Select Certificate',
-              msg: 'Please select any certificate first',
-              showClose: true,
-              timeout: 3000,
-              theme: "material"
-            });
+            if(routerLink!='/dashboard'){
+              this.toastyService.warning({
+                title: 'Select Certificate',
+                msg: 'Please select any certificate first',
+                showClose: true,
+                timeout: 3000,
+                theme: "material"
+              });
+            }
         }
     }
 }

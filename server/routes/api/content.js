@@ -35,14 +35,14 @@ app.use(router);
 /*
   Author : Niral Patel
   Desc   : Get content detail
-  Date   :1/6/2016
+  Date   : 1/6/2016
  */
-
  app.get('/getContentDetails',IsAuthenticated,function(req,res){
   if(req.query['certificate_id'] && req.query['certificate_id'] != '')
   {
      connection.query("SELECT cr.resource_id,cr.certificate_id,cr.resource_name,cr.description,TIME_TO_SEC(cr.test_time)/60 as test_time,cr.points,cr.web_image,count(question_id) as question FROM cs_resources as cr LEFT JOIN cs_questions AS cq ON cq.section_id = cr.resource_id and cq.is_deletable = 0 where cr.certificate_id= "+req.query.certificate_id+" and cr.is_delete = 0 GROUP BY cr.resource_id",
       function(err, contentdata) {
+          console.log(contentdata);
           if(contentdata && contentdata.length>0){
             res.status(200).json({"status":1,'message':'content details','content' : contentdata });
           }else{

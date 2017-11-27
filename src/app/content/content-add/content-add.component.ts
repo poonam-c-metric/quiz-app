@@ -1,3 +1,4 @@
+import { API_URL } from './../../_guards/configure';
 import { Component, OnInit } from '@angular/core';
 import { Content } from '../../_models/index';
 import { ContentService } from '../../_services/index'
@@ -17,7 +18,7 @@ export class ContentAddComponent implements OnInit {
   contentData : any = {};
   contentID : string;
   public errorMessage : String;
-  public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/content/uploadDocument', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml', 'application/pdf', 'application/msword', 'application/vnd.ms-excel', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  public uploader : FileUploader = new FileUploader({url: API_URL+'/content/uploadDocument', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml', 'application/pdf', 'application/msword', 'application/vnd.ms-excel', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ],
    maxFileSize: 10*1024*1024});
 

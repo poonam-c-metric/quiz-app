@@ -13,7 +13,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 
 import { AuthGuard , StudentAuthGuard } from './_guards/index';
-import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend, StudentModuleService, PublishService } from './_services/index';
+import { AuthenticationService, UserService, CertificateService, StudentService, DataFilterPipe, ContentService, QuestionService, DefaultRequestOptions, MyXHRBackend, StudentModuleService, PublishService, ReportService } from './_services/index';
 
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RecaptchaModule } from 'ng-recaptcha';
@@ -51,6 +51,7 @@ import { StudentprofileComponent } from './studentprofile/studentprofile.compone
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { StudentpasswordComponent } from './studentpassword/studentpassword.component';
 import { StudentResetPasswordComponent } from './student-reset-password/student-reset-password.component';
+import { DaterangepickerModule } from 'angular-2-daterangepicker';
 
 @NgModule({
   declarations: [
@@ -100,7 +101,8 @@ import { StudentResetPasswordComponent } from './student-reset-password/student-
     Ng2DragDropModule,
     ToastyModule.forRoot(),
     RecaptchaModule.forRoot(),
-    TimepickerModule.forRoot()
+    TimepickerModule.forRoot(),
+    DaterangepickerModule
   ],
   providers: [
     AuthGuard,
@@ -113,6 +115,7 @@ import { StudentResetPasswordComponent } from './student-reset-password/student-
     QuestionService,
     StudentModuleService,
     PublishService,
+    ReportService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: RequestOptions, useClass: DefaultRequestOptions },
     { provide: XHRBackend, useClass: MyXHRBackend }

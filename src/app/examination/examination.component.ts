@@ -60,7 +60,6 @@ export class ExaminationComponent implements OnInit {
     this.getTestTime(this.contentID);
   }
 
-
 /*
   Author : Poonam Gokani
   Desc   : To create range for loop
@@ -156,59 +155,39 @@ export class ExaminationComponent implements OnInit {
 /*
   Author : Poonam Gokani
   Desc   : Generate Result Dashaboard based on question answered
-  Date   : 17/07/2017
+  Date   : 17/07/2017 - 23/08/2017
+  Update : Make changes in code for multiple answers
  */
   generateResultDashboard(){
-    this.totalCorrectAnswer = 0;
-    this.resultDashoboard = true;
-    let temp = {};
-    let loopcounter = 0;
-    let answer = {};
-    let student_id = JSON.parse(localStorage.getItem('currentStudent')).student_id;
-    let certificate_id = JSON.parse(localStorage.getItem('currentStudent')).certificate_id;
-    let multipleAnswerFlag = false;
+    console.log(this.questionData);
+    this.savedAnswer = [];
+    var answer = {};
+    let displayData = {};
     for (let qdata in this.questionData){
-      temp = {};
       answer = {};
-      temp['question_text'] = this.questionData[qdata].question_text;
-      loopcounter = 0;
-      answer['question_id'] = this.questionData[qdata].question_id;
-      answer['certificate_id'] = certificate_id;
-      answer['section_id'] = this.contentID;
-      answer['student_id'] = student_id;
+      displayData = {};
+      answer['question_id'] = qdata;
+      displayData['question_text'] = this.questionData[qdata].question_text;
       for(let ansdata in this.questionData[qdata].answers){
-        multipleAnswerFlag = false;
-        if(this.questionData[qdata].answers[ansdata]['attempted'] == true){
-          answer['answer_id'] = this.questionData[qdata].answers[ansdata]['answer_id'];
-          temp['your_answer'] = this.questionData[qdata].answers[ansdata]['answer_text'];
-        }
-        if(this.questionData[qdata].answers[ansdata]['is_correct'] == true){
-          if(JSON.parse(this.questionData[qdata].answers[ansdata]['is_correct']) == JSON.parse(this.questionData[qdata].answers[ansdata]['attempted'])){
-            temp['status'] = "Right";
-            answer['passfail'] = 1;
-            if(this.questionData[qdata].question_type == 'multiple' && multipleAnswerFlag==false){
-              multipleAnswerFlag = true;
-              this.totalCorrectAnswer++;
-            }else{
-              this.totalCorrectAnswer++;
-            }
-            console.log(this.questionData[qdata].question_type);
+        if(this.questionData[qdata].question_type =='multiple' && this.questionData[qdata].answers[ansdata]['attempted'] == true){
+          if(answer['answer_id'] == undefined){
+            answer['answer_id'] = [];
+            displayData['your_answer'] = [];
           }
+          answer['answer_id'].push(this.questionData[qdata].answers[ansdata]['answer_id']);
+          displayData['your_answer'].push(this.questionData[qdata].answers[ansdata]['answer_text']);
+        }else if(this.questionData[qdata].question_type =='single' && this.questionData[qdata].answers[ansdata]['attempted'] == true) {
+          answer['answer_id'] = this.questionData[qdata].answers[ansdata]['answer_id'];
+          displayData['your_answer'] = this.questionData[qdata].answers[ansdata]['answer_text'];
         }
-        loopcounter++;
       }
-      if(loopcounter == this.questionData[qdata].answers.length && temp['status'] == undefined){
-        console.log('Inside If');
-        temp['status'] = 'Wrong';
-        answer['passfail'] = 0 ;
-      }
-      this.resultData.push(temp);
       this.savedAnswer.push(answer);
+      this.resultData.push(displayData);
     }
     this.saveStudentAnswer();
-    console.log('Total Correct Answer:');
-    console.log(this.totalCorrectAnswer);
-    console.log(this.questionlistData.length);
+    console.log('Result Data is:');
+    console.log(this.resultData);
+
   }
 
 /*
@@ -217,20 +196,17 @@ export class ExaminationComponent implements OnInit {
   Date   : 25/07/2017
  */
   saveStudentAnswer(){
-    console.log(this.savedAnswer);
-    this.studentModuleService.saveStudentAnswer({'answers' : this.savedAnswer})
+    let student_id = JSON.parse(localStorage.getItem('currentStudent')).student_id;
+    let student_email = JSON.parse(localStorage.getItem('currentStudent')).student_active_email;
+    let certificate_id = JSON.parse(localStorage.getItem('currentStudent')).certificate_id;
+    this.studentModuleService.saveStudentAnswer({'answers' : this.savedAnswer, 'resource_id': this.contentID , 'student_id': student_id , 'certificate_id': certificate_id, 'resultData' : this.resultData, 'student_email': student_email})
       .subscribe(
           data => {
             if(data.status=="1"){
-                /*this.toastyService.success({
-                    title: data.code,
-                    msg: data.message,
-                    showClose: true,
-                    timeout: 5000,
-                    theme: "material"
-                });*/
               console.log('Inside Save Student Result');
-              this.saveStudentResult();
+              console.log(data.result);
+              this.resultDashoboard = true;
+              //this.saveStudentResult();
             }
           },
           error => {
@@ -250,11 +226,11 @@ export class ExaminationComponent implements OnInit {
   Desc   : Function for integrating webservice save student result
   Date   : 04/08/2017
  */
-  saveStudentResult(){
+  /*saveStudentResult(){
     let percentage = 0;
     let studentResult = {};
     studentResult['student_id'] = JSON.parse(localStorage.getItem('currentStudent')).student_id;
-    studentResult['section_id'] = this.contentID;;
+    studentResult['section_id'] = this.contentID;
     if(this.totalCorrectAnswer!=0)
       percentage = 100*this.totalCorrectAnswer/this.questionlistData.length;
     if(percentage > 40){
@@ -268,19 +244,14 @@ export class ExaminationComponent implements OnInit {
       .subscribe(
         data => {
           if(data.status=="1"){
-              /* this.toastyService.success({
-                  title: data.code,
-                  msg: data.message,
-                  showClose: true,
-                  timeout: 5000,
-                  theme: "material"
-              });*/
+              console.log('Test');
             }
           },
           error => {
             console.log('Inside Error');
           });
-  }
+  }*/
+
 
 /*
   Author : Poonam Gokani
@@ -394,7 +365,6 @@ export class ExaminationComponent implements OnInit {
   Desc   : Funtion to initiate countdoen
   Date   : 08/08/2017
  */
-
   countdown( minutes, seconds)
   {
     this.endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;

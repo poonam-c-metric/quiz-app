@@ -18,15 +18,15 @@ export class StudentModuleService {
  	*/
 	login(student_active_email: string, student_password: string) {
 	    return this.http.post('/api/studentmodule/loginStudent',{ student_active_email: student_active_email, student_password: student_password })
-	        .map((response: Response) => {
-	            let data = response.json();
-	            if (data && data.student) {
-	            	localStorage.setItem('currentStudent',JSON.stringify(data.student));
-	            	localStorage.setItem('currentUser',JSON.stringify(data.student));
-	            	localStorage.setItem('studentAccessToken',data['student']['accessToken']);
-	            }
-	            return data.student;
-	        });
+        .map((response: Response) => {
+            let data = response.json();
+            if (data && data.student) {
+            	localStorage.setItem('currentStudent',JSON.stringify(data.student));
+            	//localStorage.setItem('currentUser',JSON.stringify(data.student));
+            	localStorage.setItem('studentAccessToken',data['student']['accessToken']);
+            }
+            return data.student;
+        });
 	}
 
 	/*
@@ -95,17 +95,30 @@ export class StudentModuleService {
       })
   }
 
-    /*
-	  Author : Poonam Gokani
-	  Desc   : Integration of webservice for reset new password
-	  Date   : 31/07/2017
-  	*/
-    resetNewPassword(password : String , accessToken : String){
-      return this.http.post('/api/studentmodule/updateResetPassword',{student_password: password , accessToken:accessToken})
-          .map((response: Response) => {
-              let data = response.json();
-              return data;
-          })
-    }
+  /*
+  Author : Poonam Gokani
+  Desc   : Integration of webservice for reset new password
+  Date   : 31/07/2017
+	*/
+  resetNewPassword(password : String , accessToken : String){
+    return this.http.post('/api/studentmodule/updateResetPassword',{student_password: password , accessToken:accessToken})
+        .map((response: Response) => {
+            let data = response.json();
+            return data;
+        })
+  }
+
+  /*
+  Author : Poonam Gokani
+  Desc   : Integration of webservice to get content details for student
+  Date   : 10/08/2017
+  */
+  getContentForStudent( certificateId : Number , studentId : Number) {
+    return this.http.get("/api/studentmodule/getContentForStudent?certificate_id="+certificateId+"&student_id="+studentId)
+     .map((response: Response) => {
+        let data = response.json();
+        return data;
+    });
+  }
 
 }

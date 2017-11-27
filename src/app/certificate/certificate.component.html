@@ -4,16 +4,18 @@
     <form name="form" (ngSubmit)="f.form.valid && createCertificate()" #f="ngForm" novalidate>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !certificate_name.valid }">
             <label for="certificate_name">Program Name:</label>
-            <input type="text" class="form-control" name="certificate_name" [(ngModel)]="certificateData.certificate_name" #certificate_name="ngModel" required />
+            <input type="text" class="form-control" name="certificate_name" [(ngModel)]="certificateData.certificate_name" #certificate_name="ngModel" required
+            [maxlength]="100" />
             <div *ngIf="f.submitted && !certificate_name.valid" class="help-block">Program Name is required</div>
         </div>
         <div class="form-group">
             <label for="description">Description:</label>
-            <input type="text" class="form-control" name="desciption" [(ngModel)]="certificateData.certificate_purpose" #certificate_purpose="ngModel"/>
+            <input type="text" class="form-control" name="description" [(ngModel)]="certificateData.certificate_purpose" #certificate_purpose="ngModel"/>
         </div>
         <div class="form-group">
             <label for="organization_name">Organization Name:</label>
-            <input type="text" class="form-control" name="organization_name" [(ngModel)]="certificateData.institute_name"/>
+            <input type="text" class="form-control" name="organization_name" [(ngModel)]="certificateData.institute_name"
+            [maxlength]="100"/>
         </div>
         <div class="input-group">
             <div class="col-md-3" style="padding-left:0px !important">
@@ -31,9 +33,9 @@
             </div>
         </div>
         <br>
-        <div (click)="showAdvancedSetting()">
-            <a>Show Advanced Setting</a>
-        </div>
+        <button class="advancesetting" (click)="showAdvancedSetting()">
+            Show Advance Setting
+        </button>
         <div [hidden]="!showAdvancedFlag">
             <div class="form-group">
                 <label for="selfregisteration">Self Registration:</label>
@@ -46,13 +48,12 @@
             </div>
             <div class="form-group" *ngIf="ecommerce">
                 <label for="studentcost">Cost to Student:</label>
-                <input type="text" class="form-control" name="cert_cost" [(ngModel)]="certificateData.cert_cost" #cert_cost="ngModel"  number/>
+                <input type="text" class="form-control" name="cert_cost" [(ngModel)]="certificateData.cert_cost" #cert_cost="ngModel" number maxlength="8"/>
                 <div *ngIf="cert_cost.errors?.number" class="help-block">Cost only contains numeric value.</div>
             </div>
             <div class="form-group">
-                <label for="certificate_mode">Program Mode:</label>
-                <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="course" /> Course
-                <input type="radio" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" value="catalog" /> Catalog
+                <input type="radio" value="Course" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" #certificate_mode="ngModel" (click)="certificateData.certificate_mode='course'"> Course
+                <input type="radio" value="Content" name="certificate_mode" [(ngModel)]="certificateData.certificate_mode" #certificate_mode="ngModel" (click)="certificateData.certificate_mode='content'"> Content
             </div>
             <div class="form-group" *ngIf="certificateData.certificate_mode==='catalog'">
                 <label for="passingscore">Passing Score:</label>

@@ -9,6 +9,11 @@
 	<span style="float:right;">
 		<a [routerLink]="['/questions/insert']" class="btn btn-cs">Add New</a>
 	</span>
+    <label class="custom-file-upload btn btn-cs" style="float:right;margin-right:20px;">
+        <i class="fa fa-plus-square"></i>Upload Question
+        <input #fileupload type="file" name="questionfile" ng2FileSelect [uploader]="uploader">
+    </label>
+    {{ this.errorMessage }}
 </div>
 </div>
 <div class="col-md-12">
