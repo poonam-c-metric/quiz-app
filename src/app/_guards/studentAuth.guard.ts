@@ -12,7 +12,7 @@ export class StudentAuthGuard implements CanActivate {
     constructor(private router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (localStorage.getItem('currentUser')) {
+        if(localStorage.getItem('currentStudent')) {
           console.log('Inside Current Student Exist mode');
           return true;
         }

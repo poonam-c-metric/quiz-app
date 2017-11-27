@@ -1,7 +1,87 @@
 <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-        		Inside Report Component
-        </div>
-    </div>
-</div>
+  <div class="container-fluid">
+      <div class="row">
+      		Student Reports               
+      </div>
+      <div class="row">
+        <label class="col-md-3">Filter By Date:</label>        
+        <date-range-picker [class]="'col-md-12 form-control'" [options]="daterangepickerOptions"></date-range-picker> 
+      </div>
+      <div class="row">
+        <label class="col-md-3">Search By:</label>
+        <select>
+          <option value="">---Select---</option>
+          <option value="LAST LOGIN">LAST LOGIN</option>
+          <option value="REGISTRATION DATE">REGISTRATION DATE</option>
+        </select>
+      </div>
+      <div>
+        <input type="submit" name="generateReport" value="Apply" class="btn btn-primary" 
+        (click)="generateReport()">
+      </div>
+  </div>
+
+  <div class="col-lg-12">
+  <div class="table-responsive">      
+    <div class="panel panel-default">
+      <div class="panel-heading">Question Information</div>
+        <table class="table table-striped" [mfData]="questionlistData | dataFilter : filterQuery" #mf="mfDataTable"
+               [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder">
+            <thead>
+            <tr>
+              <th style="width: 20%">
+                  <mfDefaultSorter by="student_name">Student Name</mfDefaultSorter>
+              </th>
+              <th style="width: 40%">
+                  <mfDefaultSorter>Student Email</mfDefaultSorter>
+              </th>
+              <th style="width: 10%">
+                  <mfDefaultSorter>Last Login</mfDefaultSorter>
+              </th>
+              <th style="width: 20%"> 
+                <mfDefaultSorter>Result</mfDefaultSorter>
+              </th>
+              <th style="width: 20%"> 
+                <mfDefaultSorter>Date Completed</mfDefaultSorter>                  
+              </th>
+              <th style="width: 20%"> 
+                <mfDefaultSorter>Registration Date</mfDefaultSorter>                              
+              </th>
+              <th style="width: 20%"> 
+                <mfDefaultSorter>Test Attempts</mfDefaultSorter>                         
+              </th>
+            </tr>
+            <tr>
+                <th colspan="5">
+                    Filter by name:
+                    <input class="form-control" [(ngModel)]="filterQuery"/>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of mf.data">
+                <td>{{item.question_text}}</td>
+                <td>{{item.question_order}}</td>
+                <td class="text-right">
+                    <input type="checkbox"
+                        [(ngModel)]="item.is_active"
+                        [ngModelOptions]="{standalone: true}"
+                        (change)="changeQuestionStatus(item.is_active,item.question_id)"/>
+                </td>
+                <td>
+                  <a class="btn btn-small btn-warning btn-sm" [routerLink]="['/questions/update',item.question_id]"><i class="fa fa-pencil" title="Update"></i></a>
+        <a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteQuestionModal" (click)="openDeleteQuestionModal(item.question_id,deleteQuestionModal)"><i class="material-icons">delete</i></a>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5">
+                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,15]"></mfBootstrapPaginator>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>       
+  </div>
+</div>     

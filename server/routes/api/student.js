@@ -7,6 +7,9 @@ var connection = require('../connection.js');
 var mailer = require('../mailer.js');
 var jwt    = require('jsonwebtoken');
 var common = require('../common.js');
+var multer = require('multer');
+var xlstojson = require("xls-to-json-lc");
+var xlsxtojson = require("xlsx-to-json-lc");
 
 var https = require('https');
 
@@ -25,7 +28,7 @@ app.use(router);
 
  app.use(function(req, res, next) { //allow cross origin requests
   res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", req.get("host"));
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Credentials", true);
   next();
@@ -43,7 +46,7 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
          && req.body['student_active_email'] && req.body['student_active_email'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
       {
         req.body['student_password'] = common.encrypt(req.body['student_password']);
-        req.body.date_added=moment().format('YYYY-MM-DD');
+        req.body.date_added = moment().format('YYYY-MM-DD');
         req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
         connection.query('SELECT * FROM cs_students where student_active_email=?',req.body['student_active_email'],
           function(err, rows) {
@@ -66,7 +69,7 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
                       if (req.body["is_email_active"] == true)
                       {
                         req.body['student_password'] = common.decrypt(req.body['student_password']);
-                        sendStudentConfirmationEmail(req.body,results.insertId);
+                        sendStudentConfirmationEmail(req,results.insertId);
                       }
                       res.status(200).json({"status":1,'message': 'Student created Successfully' ,'code': 'SUCCESS'});
                    }
@@ -107,7 +110,7 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
 /*
   Author : Niral Patel
   Desc   : Get student by id
-  Date   :31/6/2016
+  Date   : 31/6/2016
  */
 app.get('/getStudentById', IsAuthenticated, function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
@@ -131,7 +134,7 @@ app.get('/getStudentById', IsAuthenticated, function(req,res){
 /*
   Author : Niral Patel
   Desc   : Update student detail
-  Date   :31/6/2016
+  Date   : 31/6/2016
  */
 app.post('/updateStudent', IsAuthenticated, function(req, res){
   delete req.body["student_confirm_password"];
@@ -154,7 +157,7 @@ app.post('/updateStudent', IsAuthenticated, function(req, res){
                   };
                   var token = jwt.sign(tokenData, privateKey);
                   req.body['accessToken'] = token;
-                  sendStudentConfirmationEmail(req.body,req.body["student_id"]);
+                  sendStudentConfirmationEmail(req,req.body["student_id"]);
                 }
               res.status(200).json({"status":1,'message': 'Student updated Successfully' ,'code': 'SUCCESS'});
             }
@@ -169,7 +172,7 @@ app.post('/updateStudent', IsAuthenticated, function(req, res){
 /*
   Author : Niral Patel
   Desc   : Delete student
-  Date   :31/6/2016
+  Date   : 31/6/2016
  */
 app.get('/deleteStudent', IsAuthenticated, function(req,res){
   if(req.query['student_id'] && req.query['student_id'].trim() != '')
@@ -191,12 +194,101 @@ app.get('/deleteStudent', IsAuthenticated, function(req,res){
       res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
     }
 });
+
+/*
+  Author : Poonam Gokani
+  Desc   : Upload Student data using excel
+  Date   : 17/08/2017
+ */
+  var storage = multer.diskStorage({ //multers disk storage settings
+    destination: function (req, file, cb) {
+        cb(null, './src/uploads/student')
+    },
+    filename: function (req, file, cb) {
+        var datetimestamp = Date.now();
+        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+    }
+  });
+
+    var upload = multer({ //multer settings
+      storage: storage
+    }).single('file');
+
+    /** API path that will upload the files */
+    app.post('/uploadStudent', function(req, res) {
+        var exceltojson;
+        upload(req,res,function(err){
+            if(err){
+              console.log('Inside Error');
+              console.log(err);
+              res.json({error_code:1,err_desc:err});
+              return;
+            }
+            /** Multer gives us file info in req.file object */
+            console.log(req.body['certificate_id']);
+            if(!req.file){
+              console.log('Inside If');
+              res.json({error_code:1,err_desc:"No file passed"});
+              return;
+            }
+            /** Check the extension of the incoming file and
+             *  use the appropriate module
+             */
+            if(req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xlsx'){
+                exceltojson = xlsxtojson;
+            } else {
+                exceltojson = xlstojson;
+            }
+            try {
+              exceltojson({
+                  input: req.file.path,
+                  output: null, //since we don't need output.json
+                  lowerCaseHeaders:true
+              },function(err,result){
+                if(err) {
+                  return res.json({error_code:1,err_desc:err, data: null});
+                }
+                //res.json({error_code:0,err_desc:null, data: result});
+                var resultArr = [];
+                result.forEach(function(value,key) {
+                  var tempResult = [];
+                  tempResult.push(common.encrypt(result[key]['student_password']));
+                  tempResult.push(result[key]['student_first_name']);
+                  tempResult.push(result[key]['student_last_name']);
+                  tempResult.push(result[key]['student_username']);
+                  tempResult.push(result[key]['student_active_email']);
+                  tempResult.push(req.body['certificate_id']);
+                  tempResult.push(moment().format('YYYY-MM-DD'));
+                  var tokenData = {
+                    emailId: result[key]['student_active_email']
+                  };
+                  var token = jwt.sign(tokenData, privateKey);
+                  tempResult.push(token);
+                  tempResult.push(req.connection.remoteAddress.replace(/^.*:/, ''));
+                  resultArr.push(tempResult);
+                });
+                connection.query("INSERT INTO `cs_students` (student_password,student_first_name,student_last_name,student_username,student_active_email,certificate_id,date_added,accessToken,ip_added) VALUES ?",[resultArr],function (err1, results1) {
+                  if (err1) {
+                    res.status(200).json({"status":0,'message': err1.message.split(":")[1],'code': err1.code});
+                    console.log('Error occured'+err1.message);
+                  }else{
+                    res.status(200).json({"status":0,'message': 'Student Account created successfully','code': 'SUCCESS'});
+                  }
+                });
+              });
+            } catch (e){
+                res.json({error_code:1,err_desc:"Corrupted excel file"});
+            }
+        })
+    });
 /*
   Author : Niral Patel
   Desc   : send confirmation mail
-  Date   :31/6/2016
+  Date   : 31/6/2016
  */
 function sendStudentConfirmationEmail(req,userid){
+  var api_url = req.get('host');
+  var req = req.body;
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = req.student_active_email;
   var SUBJECT = ' Learning Program Information';
@@ -205,11 +297,11 @@ function sendStudentConfirmationEmail(req,userid){
   var RELATIVE_TEMPLATE_PATH = 'templates/confirm-email/index';
 
   var html =  "<h1>Dear "+ req.student_first_name + " "+ req.student_last_name +",</h1><br><br>" +
-  "You have been registered for a Micro-Learning course by testorg..<br><br>"+
+  "You have been registered for a Micro-Learning course by testorg.<br><br>"+
   "Login :"+
-  "<a href='http://localhost:3000/#/online-exam?accessToken="+req.accessToken+"'>http://localhost:3000/#/online-exam?&accessToken="+req.accessToken+"</a><br><br>"+
+  "<a href="+api_url+"'/#/online-exam?accessToken="+req.accessToken+"'>"+api_url+"/#/online-exam?&accessToken="+req.accessToken+"</a><br><br>"+
   "<b>Email</b> :"+req.student_active_email+
-  "<br><b>Passwors</b> :"+req.student_password+
+  "<br><b>Password</b> :"+req.student_password+
   "<br><br>Best regards,<br>" +
   "The Certspring Team<br>" +
   "support@Certspring.com";

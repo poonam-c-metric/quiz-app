@@ -13,6 +13,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: './studentdashboard.component.html',
   styleUrls: ['./studentdashboard.component.css']
 })
+
 export class StudentdashboardComponent implements OnInit {
 
   private studentDetails : Object = {};

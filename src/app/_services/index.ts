@@ -9,3 +9,4 @@ export * from './httpextend.service';
 export * from './xhrbackend.service';
 export * from './student-module.service';
 export * from './publish.service';
+export * from './report.service';

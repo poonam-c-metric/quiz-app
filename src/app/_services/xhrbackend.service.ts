@@ -22,7 +22,7 @@ export class MyXHRBackend extends XHRBackend {
   processResponse(response : Response){
     switch (response.status) {
       case 401:
-        localStorage.remove('currentUser');
+        localStorage.removeItem('currentUser');
         window.location.hash = 'login';
       case 403:
         console.log('Redirected to login');

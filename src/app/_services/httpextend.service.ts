@@ -17,9 +17,11 @@ export class DefaultRequestOptions extends BaseRequestOptions {
   merge(options?: RequestOptionsArgs): RequestOptions {
     var newOptions = super.merge(options);
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if(currentUser == null)
+      currentUser = JSON.parse(localStorage.getItem('currentStudent'));
     if(currentUser!=null){
     	newOptions.headers.set('Authorization', currentUser.accessToken);
-	}
-  return newOptions;
+	  }
+    return newOptions;
   }
 }

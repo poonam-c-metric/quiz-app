@@ -26,7 +26,7 @@
 
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_confirm_password.valid}">
             <label for="student_confirm_password">Confirm Password *</label>
-            <input type="password" class="form-control" name="student_confirm_password" [(ngModel)]="studentData.student_password" #student_confirm_password="ngModel" required [minlength]="8" [maxlength]="16" [equalTo]="student_password"/>
+            <input type="password" class="form-control" name="student_confirm_password" [(ngModel)]="studentData.student_confirm_password" #student_confirm_password="ngModel" required [minlength]="8" [maxlength]="16" [equalTo]="student_password"/>
             <div *ngIf="f.submitted && student_confirm_password.hasError('required')" class="help-block">Confirm Password is required</div>
             <div *ngIf="student_confirm_password.hasError('minlength') && student_confirm_password.dirty" class="help-block">Confirm Password must be at least 8 characters long.</div>
             <br>
@@ -35,13 +35,9 @@
 
         <div class="form-group">
             <label for="is_email_active">Send information to student:</label>
-
              <input tabindex="6" [(ngModel)]="studentData.is_email_active" name="is_email_active" type="checkbox" id="is_email_active" autocomplete="off" value="1" checked="true">
         </div>
-
-
         <br>
-
         <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Save"/>
              <a [routerLink]="['/students']" class="btn btn-link">Cancel</a>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService , UserService } from '../_services/index';
-import {ToastyService, ToastyConfig} from 'ng2-toasty';
+import { ToastyService, ToastyConfig } from 'ng2-toasty';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
@@ -37,10 +37,11 @@ export class LoginComponent implements OnInit {
             },
             error => {
                 console.log('Inside Error');
-                let err = error.json();
+                //let err = error.json();
+                console.log('error details:'+error);
                 this.toastyService.error({
                     title: "Login Failed",
-                    msg: err.message,
+                    msg: error.message,
                     showClose: true,
                     timeout: 5000,
                     theme: "material"

@@ -83,10 +83,9 @@ app.post('/changeStudentPassword', function(req,res){
               if (err) {
                 res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
               }else{
-                console.log('send_email flag:'+req.body['send_email']);
                 if(req.body['send_email'] && req.body['send_email'] == 1)
                 {
-                  sendUpdateResetPasswordMail(student[0]);
+                  sendUpdateResetPasswordMail(student[0],req.get('host'));
                 }
                 res.status(200).json({'status':1,'message' : 'You account password has been changed successfully.' , 'code' : 'SUCCESS'});
               }
@@ -110,31 +109,110 @@ app.post('/changeStudentPassword', function(req,res){
 app.post('/saveStudentAnswer', function(req,res){
   if(req.body['answers']){
     var answers = req.body['answers'];
+    var counter = 0;
     var ans_arr = [];
     var ans = [];
+    var correctflag = 1;
+    var certificate_id = parseInt(req.body['certificate_id']);
+    var student_id = parseInt(req.body['student_id']);
+    var resource_id = parseInt(req.body['resource_id']);
+    var answerDetail = req.body['resultData'];
+    var studentEmail = req.body['student_email'];
     answers.forEach(function(ansRes) {
-      ans = [];
-      ans.push(null);
-      ans.push(ansRes['answer_id']);
-      ans.push(parseInt(ansRes['question_id']));
-      ans.push(parseInt(ansRes['certificate_id']));
-      ans.push(ansRes['section_id']);
-      ans.push(parseInt(ansRes['student_id']));
-      ans.push(moment().format('YYYY-MM-DD'));
-      ans.push(parseInt(ansRes['passfail']));
-      ans_arr.push(ans);
+      connection.query("select answer_id from cs_answers where question_id ='"+ ansRes['question_id'] + "' and is_correct = 1",function(err,result){
+        counter++;
+        if(typeof ansRes['answer_id'] != 'object'){
+          ans = [];
+          ans.push(null);
+          ans.push(parseInt(ansRes['question_id']));
+          ans.push(certificate_id);
+          ans.push(resource_id);
+          ans.push(student_id);
+          ans.push(moment().format('YYYY-MM-DD'));
+          ans.push(ansRes['answer_id']);
+          if(result[0]['answer_id'] ==  ansRes['answer_id']){
+            ans.push(1);
+          }else{
+            ans.push(0);
+          }
+          ans_arr.push(ans);
+        }else{
+          correctflag = 1;
+          if(result.length == ansRes['answer_id'].length){
+            result.forEach(function(correctans){
+              if(!correctans['answer_id'] in ansRes['answer_id']){
+                correctflag = 0;
+              }
+            });
+          }else{
+            correctflag = 0;
+          }
+          ansRes['answer_id'].forEach(function(ansdata){
+            ans = [];
+            ans.push(null);
+            ans.push(parseInt(ansRes['question_id']));
+            ans.push(certificate_id);
+            ans.push(resource_id);
+            ans.push(student_id);
+            ans.push(moment().format('YYYY-MM-DD'));
+            ans.push(ansdata);
+            ans.push(correctflag);
+            ans_arr.push(ans);
+          })
+        }
+
+        if(counter == answers.length){
+          connection.query("INSERT INTO `cs_student_answer` (stu_answer_id, question_id, certificate_id, resource_id, student_id, data_added, answer_id, passfail) VALUES ?",[ans_arr],function (err1, results1) {
+            if(err1) {
+              res.status(200).json({'status':0,'message' : err1.message , 'code' : 'ANSERROR'});
+            }else{
+              generateStudentResult(student_id,resource_id,res,answerDetail,studentEmail);
+            }
+          });
+        }
+      });
     });
-    connection.query("INSERT INTO `cs_student_answer` (stu_answer_id, answer_id, question_id, certificate_id, section_id, student_id, data_added, passfail) VALUES ?",[ans_arr],function (err1, results1) {
-     if(err1) {
-        res.status(200).json({'status':0,'message' : err1.message , 'code' : 'ANSERROR'});
-     }else{
-        res.status(200).json({'status':1,'message' : 'Answers inserted successfully' , 'code' : 'SUCCESS'});
-     }
-    });
+
   } else {
-    res.status(303).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+    res.status(200).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 })
+
+function generateStudentResult(student_id,resource_id,res,answerDetail,student_email){
+  var score_needed = "";
+  var score_get = "";
+  var total_question = 10;
+  var resultdata = {};
+  connection.query("Select correct_answer from cs_resources where resource_id = '"+resource_id+"'" ,function(error,result){
+    score_needed = result[0]['correct_answer'];
+    connection.query("SELECT COUNT(DISTINCT question_id) AS correct_answer FROM `cs_student_answer` where passfail='1' and resource_id = '"+ resource_id +"' and student_id ='"+student_id+"'",function(error,result){
+      score_get = result[0]['correct_answer'];
+      if(score_get >= score_needed)
+        resultdata['pass_fail'] = 1;
+      else
+        resultdata['pass_fail'] = 2;
+      resultdata['student_id'] = student_id;
+      resultdata['resource_id'] = resource_id;
+      resultdata['percentage'] = 100 * score_get / total_question;
+      connection.query("select MAX(test_attempts) as test_attempts from cs_std_section_result where student_id= '"+ student_id+"' and resource_id = '"+ resource_id  +"' GROUP BY student_id, resource_id",function(error,data){
+          console.log('maximum test attempts');
+          console.log(data);
+          if(data.length != 0){
+            resultdata['test_attempts'] = data[0]['test_attempts'] + 1;
+            console.log(resultdata['test_attempts']);
+          }
+          connection.query("INSERT INTO `cs_std_section_result` SET ?;",[resultdata],function (err1, results1) {
+            if(err1) {
+              res.status(200).json({'status':0,'message' : err1.message , 'code' : 'ResultInsertionError'});
+            }else{
+              sendResultMail(resultdata,answerDetail,student_email);
+              res.status(200).json({'status':1,'message' : 'Result inserted successfully' , 'code' : 'SUCCESS' , 'result': resultdata});
+            }
+          });
+      });
+    });
+  });
+}
 
 /*
   Author : Poonam Gokani
@@ -142,6 +220,7 @@ app.post('/saveStudentAnswer', function(req,res){
   Date   : 04/08/2017
  */
 app.post('/saveStudentResult', function(req,res){
+  console.log('Inside saveStudentResult');
   if(req.body['resultdetails']){
     connection.query("INSERT INTO `cs_std_section_result` SET ?;",[req.body['resultdetails']],function (err1, results1) {
      if(err1) {
@@ -185,20 +264,19 @@ app.post('/resetPassword',function(req,res){
   Date   : 31/7/2017
  */
 app.post('/updateResetPassword',function(req,res){
-  console.log('Inside Update Reset Password');
-  console.log(req.body);
   if(req.body['accessToken'] && req.body['accessToken'].trim() != '' && req.body['student_password'] && req.body['student_password'].trim() != '')
   {
     req.body['student_password'] = common.encrypt(req.body['student_password']);
     connection.query("SELECT * FROM cs_students where accessToken='"+req.body['accessToken']+"'",{},
       function(err, user) {
           if(user && user.length>0){
+
             connection.query('UPDATE cs_students SET ? WHERE ?', [{ student_password: req.body["student_password"] }, { accessToken: req.body["accessToken"] }],function(err , result){
                if (err) {
                 res.status(200).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
                }else{
                 res.status(200).json({'status':1,'message' : 'Update password sucessfully and check mail in your email id.' , 'code' : 'SUCCESS'});
-                sendUpdateResetPasswordMail(user[0]);
+                sendUpdateResetPasswordMail(user[0],req.get('host'));
                }
             });
           }else{
@@ -215,11 +293,33 @@ app.post('/updateResetPassword',function(req,res){
 
 /*
   Author : Poonam Gokani
+  Desc   : Get content details based on Student Id
+  Date   : 10/08/2017
+ */
+app.get('/getContentForStudent',IsAuthenticated,function(req,res){
+  if(req.query['certificate_id'] && req.query['certificate_id'] != '' && req.query['student_id'] && req.query['student_id']!='')
+  {
+    connection.query("SELECT cr.resource_id, cr.certificate_id, cr.resource_name, cr.description, TIME_TO_SEC(cr.test_time)/60 as test_time, cr.points, cr.web_image, count(ssr.resource_id) as student_attempted_flag, ssr.pass_fail , MAX(ssr.percentage) as percentage from cs_resources cr LEFT JOIN cs_std_section_result as ssr  ON cr.resource_id = ssr.resource_id where cr.certificate_id= "+req.query.certificate_id+" and cr.is_delete = 0 GROUP BY cr.resource_id",
+      function(err, contentdata) {
+          if(contentdata && contentdata.length>0){
+            res.status(200).json({"status":1,'message':'content details','content' : contentdata });
+          }else{
+            res.status(200).json({"status":0,'message': 'Content details not found' ,'code': 'No Data'});
+          }
+      })
+  }
+  else
+  {
+    res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
+  }
+});
+
+/*
+  Author : Poonam Gokani
   Desc   : Function to send updated password information to student
   Date   : 24/07/2017
- */
-function sendUpdateResetPasswordMail(student){
-  console.log(student);
+*/
+function sendUpdateResetPasswordMail(student,api_url){
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = student.student_active_email;
   var SUBJECT = 'Certspring Student account password changed';
@@ -230,7 +330,6 @@ function sendUpdateResetPasswordMail(student){
   "<b>Password:</b>"+common.decrypt(student.student_password)+"<br><br>"+
   "Best regards,<br>The Certspring Team<br>" +
   "support@Certspring.com";
-  console.log(html);
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
     if(err){
       throw new Error('Problem sending email to: ' + TO_ADDRESS);
@@ -246,17 +345,61 @@ function sendUpdateResetPasswordMail(student){
   Date   : 31/07/2017
  */
 
-function sendResetPasswordMail(user){
+function sendResetPasswordMail(user,api_url){
 
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.student_active_email;
   var SUBJECT = 'Reset Password Link';
 
   var html =  "This email has been sent as a request to reset our password<br><br>" +
-  "<a href='http://localhost:3000/#/student/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
+  "<a href="+api_url+"/#/student/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
   "if you want to reset your password, if not, then ignore<br><br>"+
   "Best regards,<br>The Certspring Team<br>" +
   "support@Certspring.com";
+
+  mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
+    if(err){
+      throw new Error('Problem sending email to: ' + TO_ADDRESS);
+    }
+    // Yay! Email was sent, now either do some more stuff or send a response back to the client
+    res.send('Email sent: ' + success);
+  });
+}
+
+/*
+  Author : Poonam Gokani
+  Desc   : Send reset password mail
+  Date   : 31/07/2017
+ */
+
+function sendResultMail(resultdata,answerDetail,studentEmail){
+
+  var FROM_ADDRESS = 'support@Certspring.com';
+  var TO_ADDRESS = studentEmail;
+  var html = "";
+  var SUBJECT = 'Test Results';
+  var greetingStr = "";
+  var answerData = "<table><tr><th>Question</th><th>Your Answer</th></tr>"
+
+  if(resultdata['pass_fail']==1){
+    greetingStr = "Congratulation! You passed test successfully <br/>";
+  } else {
+    greetingStr = "Oops, You did not Pass. <br/>";
+  }
+
+  answerDetail.forEach(function(value,key){
+    answerData = "<tr>";
+    answerData += "<td>" + value['question_text'] + "</td>";
+    answerData += "<td>" + value['your_answer'] + "</td>";
+    answerData = "</tr>";
+  });
+
+  answerData += "</table>";
+
+  var footer = "Best regards,<br>The Certspring Team<br>" +
+  "support@Certspring.com";
+
+  html = greetingStr + answerData + footer;
 
   mailer.sendMail(FROM_ADDRESS, TO_ADDRESS, SUBJECT, html, function(err, success){
     if(err){

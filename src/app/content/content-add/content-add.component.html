@@ -42,23 +42,23 @@
 
  <modal #chooseIconModal title="Select Icon" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="useIcon(chooseIconModal)" id="chooseiconmodal">
     <modal-content>
-        <input #video name="web_image" [checked]="contentData.web_image == video.value" value="2-Video.png" type="radio" (click)="contentData.web_image = video.value">
-        <label class="drinkcard-cc" for="2-Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Video.png);">Video</label>
+        <input #video name="web_image" [checked]="contentData.web_image == video.value" value="Video.png" type="radio" (click)="contentData.web_image = video.value">
+        <label class="drinkcard-cc" for="Video.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Video.png);">Video</label>
 
-        <input #other name="web_image" [checked]="contentData.web_image==other.value" value='5-Other.png' type="radio" (click)="contentData.web_image = other.value">
-        <label class="drinkcard-cc" for="5-Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Other.png);">Other</label>
+        <input #other name="web_image" [checked]="contentData.web_image==other.value" value='Other.png' type="radio" (click)="contentData.web_image = other.value">
+        <label class="drinkcard-cc" for="Other.png" style="text-align:left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Other.png);">Other</label>
 
-        <input #general name="web_image" [checked]="contentData.web_image==general.value" value='1-General.png' type="radio" (click)="contentData.web_image = general.value">
+        <input #general name="web_image" [checked]="contentData.web_image==general.value" value='General.png' type="radio" (click)="contentData.web_image = general.value">
         <label class="drinkcard-cc" for="1-General.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/General.png);">General</label>
 
-        <input #image name="web_image" [checked]="contentData.web_image==image.value" value='3-Image.png' type="radio" (click)="contentData.web_image = image.value">
-        <label class="drinkcard-cc" for="3-Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Image.png);">Image</label>
+        <input #image name="web_image" [checked]="contentData.web_image==image.value" value='Image.png' type="radio" (click)="contentData.web_image = image.value">
+        <label class="drinkcard-cc" for="Image.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Image.png);">Image</label>
 
-        <input #audio name="web_image" [checked]="contentData.web_image==audio.value" value='6-Audio.png' type="radio" (click)="contentData.web_image = audio.value">
-        <label class="drinkcard-cc" for="6-Audio.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Audio.png);">Audio</label>
+        <input #audio name="web_image" [checked]="contentData.web_image==audio.value" value='Audio.png' type="radio" (click)="contentData.web_image = audio.value">
+        <label class="drinkcard-cc" for="Audio.png" style="text-align: left;padding-left: 27px;padding-top:54px;background-image:url(assets/icons/Audio.png);">Audio</label>
 
-        <input #picture name="web_image" [checked]="contentData.web_image==picture.value" value='4-Picture.png' type="radio" (click)="contentData.web_image = picture.value">
-        <label class="drinkcard-cc" for="4-Picture.png" style="text-align: left;padding-left: 34px;padding-top:54px;background-image:url(assets/icons/Picture.png);">Picture</label>
+        <input #picture name="web_image" [checked]="contentData.web_image==picture.value" value='Picture.png' type="radio" (click)="contentData.web_image = picture.value">
+        <label class="drinkcard-cc" for="Picture.png" style="text-align: left;padding-left: 34px;padding-top:54px;background-image:url(assets/icons/Picture.png);">Picture</label>
 
     </modal-content>
 </modal>

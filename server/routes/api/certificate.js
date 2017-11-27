@@ -101,22 +101,32 @@ app.post('/updateCertificate', IsAuthenticated, function(req, res){
   {
   req.body.date_edited=moment().format('YYYY-MM-DD');
   req.body.ip_edited = req.connection.remoteAddress.replace(/^.*:/, '');
-  connection.query("Update `cs_certificate` SET ? WHERE ?",[ req.body , { certificate_id : req.body.certificate_id }],function (err, results) {
-     if (err) {
-      res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
-     }else{
-      if(results.affectedRows)
-        res.status(200).json({'status':1,'message': 'Certificate updated Successfully' ,'code': 'SUCCESS'});
-     }
-  });
-  }
+  connection.query('SELECT * FROM cs_certificate where certificate_name=? and certificate_id != ?',[req.body['certificate_name'],req.body['certificate_id']],
+    function(err, rows) {
+        if (err) {
+          throw err;
+        }
+        else if(rows.length>0){
+          res.status(303).json({'status':0,'message': 'Program name already exists. Please enter different certificate name.','code': 'Duplicate Entry'});
+        } else {
+          connection.query("Update `cs_certificate` SET ? WHERE ?",[ req.body , { certificate_id : req.body.certificate_id }],function (err, results) {
+            if (err) {
+              res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
+            }else{
+              if(results.affectedRows)
+                res.status(200).json({'status':1,'message': 'Certificate updated Successfully' ,'code': 'SUCCESS'});
+            }
+          });
+        }
+      });
+    }
   else
   {
     res.status(401).json({'status':0,'message': 'Required parameter missing or null' ,'code': 'Invalid Parameter'});
   }
 });
 
-app.get('/deleteCertificateById',IsAuthenticated, function(req,res){
+app.delete('/deleteCertificateById',IsAuthenticated, function(req,res){
   if(req.query.certificate_id && req.query.certificate_id != ''){
      var status = {"is_delete": '1'};
      connection.query("Update `cs_certificate` SET ? WHERE ?",[ status , { certificate_id : req.query.certificate_id }],
@@ -153,8 +163,8 @@ var storage = multer.diskStorage({ //multers disk storage settings
         cb(null, './src/uploads/');
     },
     filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.originalname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
+      var datetimestamp = Date.now();
+      cb(null, file.originalname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     }
 });
 

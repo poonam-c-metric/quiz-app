@@ -4,7 +4,7 @@
   Date   : 24/07/2017
  */
 import { Component, OnInit } from '@angular/core';
-import { ContentService } from '../_services/index';
+import { StudentModuleService } from '../_services/index';
 import { ToastyService, ToastyConfig } from 'ng2-toasty';
 
 @Component({
@@ -18,24 +18,26 @@ export class StudenthomeComponent implements OnInit {
   private contentlistData : Object = {};
   private contentKeys : Array<any> =[];
 
-  constructor(private contentService : ContentService, private toastyService : ToastyService) { }
+  constructor(private toastyService : ToastyService, private studentModuleService : StudentModuleService) { }
 
   ngOnInit() {
   	this.studentDetails = JSON.parse(localStorage.getItem('currentStudent'));
-  	this.getContentData(this.studentDetails['certificate_id']);
+  	this.getContentForStudent(this.studentDetails['certificate_id'],this.studentDetails['student_id']);
   }
 
 /*
 Author : Poonam Gokani
 Desc   : Function to retrieve content data based on certificateid retrieve from student details
-Date   : 24/07/2017
+Date   : 10/08/2017
 */
-  getContentData(certificateid){
-	  this.contentService.getContentData(certificateid)
+  getContentForStudent(certificateid,studentid){
+	  this.studentModuleService.getContentForStudent(certificateid,studentid)
       .subscribe(
           data => {
             if(data['content']!=undefined){
               this.contentlistData = data['content'];
+              console.log('Inside Content Data');
+              console.log(this.contentlistData);
               this.contentKeys = Object.keys(this.contentlistData);
             }else{
               this.contentlistData = [];

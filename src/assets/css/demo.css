@@ -175,3 +175,13 @@ my-app .main-panel .main-content .card{
     padding : 15px 0;
     text-align : center;
 }
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+button.advancesetting {
+    background:none!important;
+    border:none;
+    padding:0!important;
+    color:#9c27b0;
+    cursor:pointer;
+}

@@ -1,3 +1,4 @@
+import { API_URL } from './../../_guards/configure';
 import { Component, OnInit } from '@angular/core';
 import { ToastyService, ToastyConfig } from 'ng2-toasty';
 import { ActivatedRoute , Router } from '@angular/router';
@@ -23,7 +24,7 @@ export class AddQuestionComponent implements OnInit {
   public questiontype : string ;
   public pageLoad : boolean = false;
   public pageLoading : boolean = false;
-  public uploader : FileUploader = new FileUploader({url:'http://localhost:3000/api/question/uploadQuestion/', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
+  public uploader : FileUploader = new FileUploader({url: API_URL + '/question/uploadQuestion/', autoUpload: true , allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif' , 'image/svg+xml'],
   maxFileSize: 10*1024*1024});
   items = ['single','multiple','image','dynamic'];
   droppedItems = [];
