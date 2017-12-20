@@ -42,7 +42,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { AddQuestionComponent } from './question/add-question/add-question.component';
 import { DropdownModule } from "ng2-dropdown";
-import { Ng2DragDropModule } from 'ng2-drag-drop';
+import { NgDragDropModule } from 'ng-drag-drop';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { ExaminationComponent } from './examination/examination.component';
 import { StudentloginComponent } from './studentlogin/studentlogin.component';
@@ -98,7 +98,7 @@ import { DaterangepickerModule } from 'angular-2-daterangepicker';
     DataTableModule,
     TrimValueAccessorModule,
     DropdownModule,
-    Ng2DragDropModule,
+     NgDragDropModule.forRoot(),
     ToastyModule.forRoot(),
     RecaptchaModule.forRoot(),
     TimepickerModule.forRoot(),
