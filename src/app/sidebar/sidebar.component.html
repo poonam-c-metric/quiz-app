@@ -79,7 +79,7 @@
     <div class="nav-container">
         <div id="MainMenu" class="nav">
             <div class="list-group panel">
-              <a class="list-group-item" data-parent="#MainMenu" (click)="getCertificateId('/dashboard',$event)" routerLinkActive="active">Dashboard</a>
+              <a class="list-group-item" data-parent="#MainMenu" (click)="getCertificateId('/dashboard',$event)" routerLinkActive="active" href="#dashboard">Dashboard</a>
               <a class="list-group-item" data-toggle="collapse" data-parent="#MainMenu" href="#certificate">Certificate<i class="fa fa-caret-down" aria-expanded="true"></i></a>
               <div class="list-group-submenu collapse in" id="certificate">
                 <a class="list-group-item" data-parent="#certificate" (click)="getCertificateId('/certificate/update',$event)" routerLinkActive="active">Certificate</a>

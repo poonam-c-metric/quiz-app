@@ -46,7 +46,7 @@ export class CertificateComponent implements OnInit {
       setTimeout(()=>{
         let res = JSON.parse(response);
         this.certificateData.certificate_logo = res.filename;
-      }, 1000);
+      }, 2000);
     };
   }
 

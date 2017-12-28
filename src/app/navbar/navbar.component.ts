@@ -30,22 +30,29 @@ export class NavbarComponent implements OnInit {
 
     getTitle(){
         var titlee = this.location.prepareExternalUrl(this.location.path());
-        if(titlee.charAt(0) === '#'){
-            titlee = titlee.slice( 2 );
+        if(titlee.split("/")[1]!="" && titlee.split("/")[1]!=undefined){
+            return titlee.split("/")[1];
+        }else{
+            return 'Dashboard';
         }
-        for(var item = 0; item < this.listTitles.length; item++){
+        /*if(titlee.charAt(0) === '#'){
+            titlee = titlee.slice(2);
+            console.log('Inside If');
+        }else{
+            console.log(titlee.split("/")[0]);
+            return titlee.split("/")[0];
+        }*/
+        /*for(var item = 0; item < this.listTitles.length; item++){
             if(this.listTitles[item].path.replace("/","") === titlee){
                 return this.listTitles[item].title;
             }
         }
-        return 'Dashboard';
+        return 'Dashboard';*/
     }
 
 	logout(){
-      console.log("Inside Logout");
       this.authenticationService.logout().subscribe(
         data => {
-            console.log("logout Response:");
             this.router.navigate(['/login']);
             localStorage.clear();
         },

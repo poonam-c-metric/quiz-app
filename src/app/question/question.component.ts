@@ -50,6 +50,12 @@ export class QuestionComponent implements OnInit {
     var d=new Date();
     d.setHours(5,0);
     this.max = d;
+
+    this.uploader.onWhenAddingFileFailed = (item, filter, options) => this.onWhenAddingFileFailed(item, filter, options);
+    this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
+      console.log("File Uploaded Successfully");
+      this.getQuestionData(this.contentID);
+    }
   }
 
   getQuestionData(sectionid){

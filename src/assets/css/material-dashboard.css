@@ -484,6 +484,7 @@ h2.title {
   overflow: auto;
   width: 260px;
   z-index: 4;
+  cursor: pointer;
 }
 .sidebar .logo-img,
 .off-canvas-sidebar .logo-img {
@@ -1485,10 +1486,11 @@ h2.title {
 }
 
 .close {
-  font-size: inherit;
+  font-size: 20px;
   color: #FFFFFF;
   opacity: .9;
   text-shadow: none;
+  cursor: pointer;
 }
 .close:hover, .close:focus {
   opacity: 1;
@@ -3011,6 +3013,8 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
   line-height: 30px;
   color: inherit;
   padding: 10px 15px;
+  text-transform: capitalize;
+  cursor: default;
 }
 .navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
   color: inherit;
@@ -3462,6 +3466,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
   .navbar .navbar-brand {
     height: 50px;
     padding: 10px 15px;
+    cursor: default;
   }
   .navbar .navbar-nav > li > a {
     padding-top: 15px;
@@ -3849,6 +3854,7 @@ footer .btn {
 
 .card-stats .title {
   margin: 0;
+  word-break: break-word;
 }
 .card-stats .card-header {
   float: left;

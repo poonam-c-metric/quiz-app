@@ -152,7 +152,8 @@ app.post('/resetPassword',function(req,res){
   connection.query("SELECT * FROM cs_members where member_active_email='"+req.body['emailId']+"'",{},
     function(err, user) {
         if(user && user.length>0){
-          sendResetPasswordMail(user[0]);
+          sendResetPasswordMail(user[0],req);
+          console.log(user[0]);
           res.status(200).json({'status':1,'message' : 'Mail sent Successfully' , 'code' : 'SUCCESS'});
         }else{
           res.status(401).json({'status':1,'message': 'Email address or username does not exist.' ,'code': 'Invalid EmailID'});
@@ -170,7 +171,7 @@ app.post('/resetPassword',function(req,res){
   Date   :29/5/2016
  */
 
-app.post('/updateUser', IsAuthenticated, function(req,res){
+app.put('/updateUser', IsAuthenticated, function(req,res){
   if(req.body['userdata']['member_active_email'] && req.body['userdata']['member_active_email'].trim() != ''
      && req.body['userdata']['member_first_name'] && req.body['userdata']['member_first_name'].trim() != '' && req.body['userdata']['member_last_name'] && req.body['userdata']['member_last_name'].trim() != '')
   {
@@ -197,15 +198,17 @@ app.post('/updateResetPassword',function(req,res){
   if(req.body['accessToken'] && req.body['accessToken'].trim() != '' && req.body['member_password'] && req.body['member_password'].trim() != '')
   {
   req.body['member_password'] = common.encrypt(req.body['member_password']);
-  connection.query("SELECT * FROM cs_members where accessToken='"+req.body['accessToken']+"'",{},
+  connection.query("SELECT * FROM cs_members where accessToken= ?",[req.body['accessToken']],
     function(err, user) {
+        console.log(user);
+        console.log(err);
         if(user && user.length>0){
           connection.query('UPDATE cs_members SET ? WHERE ?', [{ member_password: req.body["member_password"] }, { accessToken: req.body["accessToken"] }],function(err , result){
              if (err) {
               res.status(303).json({'status':0,'message': err.message.split(":")[1],'code': err.code});
              }else{
               res.status(200).json({'status':1,'message' : 'Update password sucessfully and check mail in your email id.' , 'code' : 'SUCCESS'});
-              sendUpdateResetPasswordMail(user[0]);
+              sendUpdateResetPasswordMail(user[0]),req;
              }
           });
         }else{
@@ -238,9 +241,8 @@ app.post('/changePassword', IsAuthenticated, function(req,res){
              }else{
               if(req.body['send_email'] && req.body['send_email'] == 1)
               {
-                sendUpdateResetPasswordMail(user[0]);
+                sendUpdateResetPasswordMail(user[0],req);
               }
-
               res.status(200).json({'status':1,'message' : 'You account password has been changed successfully.' , 'code' : 'SUCCESS'});
              }
           });
@@ -311,17 +313,17 @@ function sendConfirmationEmail(req,userid){
 /*
   Author : Niral Patel
   Desc   : Send reset password mail
-  Date   :1/6/2016
+  Date   : 1/6/2016
  */
 
-function sendResetPasswordMail(user){
+function sendResetPasswordMail(user,req){
   var API_URL = req.get('host');
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.member_active_email;
   var SUBJECT = 'Reset Password Link';
 
   var html =  "This email has been sent as a request to reset our password<br><br>" +
-  "<a href="+ API_URL +"#/resetPassword?accessToken="+user.accessToken+"'>Click here </a>"+
+  "<a href="+ API_URL +"/#/resetPassword?accessToken="+user.accessToken+">Click here </a>"+
   "if you want to reset your password, if not, then ignore<br><br>"+
   "Best regards,<br>The Certspring Team<br>" +
   "support@Certspring.com";
@@ -340,13 +342,13 @@ function sendResetPasswordMail(user){
   Date   :1/6/2016
  */
 
-function sendUpdateResetPasswordMail(user){
-
+function sendUpdateResetPasswordMail(user,req){
+  console.log('Inside sendupdate reset password');
   var FROM_ADDRESS = 'support@Certspring.com';
   var TO_ADDRESS = user.member_active_email;
   var SUBJECT = 'Certspring teacher account password changed';
-  var DATE =moment().format('MMM/DD/YYYY');
-  var html =  "Dear "+user.member_first_name+" "+user.member_last_name+",<br><br>" +
+  var DATE = moment().format('MMM/DD/YYYY');
+  var html = "Dear "+user.member_first_name+" "+user.member_last_name+",<br><br>" +
   "Please note that a password has been changed, as per your request on "+DATE+"<br><br>"+
   "Username: "+user.member_active_email+" <br>"+
   "Password: "+common.decrypt(user.member_password)+"<br><br>"+

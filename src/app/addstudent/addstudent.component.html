@@ -3,18 +3,20 @@
     <form name="form" (ngSubmit)="f.form.valid && createStudent()" #f="ngForm" novalidate>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_first_name.valid }">
             <label for="student_first_name">First Name:*</label>
-            <input type="text" class="form-control" name="student_first_name" [(ngModel)]="studentData.student_first_name" #student_first_name="ngModel" required />
-            <div *ngIf="f.submitted && !student_first_name.valid"  class="help-block">First Name is required</div>
+            <input type="text" class="form-control" name="student_first_name" [(ngModel)]="studentData.student_first_name" #student_first_name="ngModel" required [pattern]="'[a-zA-Z ]*'"/>
+            <div [hidden]="!f.submitted || !student_first_name.hasError('required')" class="errorClass">First Name is required</div>
+            <div [hidden]="!student_first_name.hasError('pattern')" class="errorClass">Only alphabets allowed</div>
         </div>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_last_name.valid }">
             <label for="student_last_name">Last Name:*</label>
-            <input type="text" class="form-control" name="student_last_name" [(ngModel)]="studentData.student_last_name" #student_last_name="ngModel" required />
-            <div *ngIf="f.submitted && !student_last_name.valid" class="help-block">Last Name is required</div>
+            <input type="text" class="form-control" name="student_last_name" [(ngModel)]="studentData.student_last_name" #student_last_name="ngModel" required [pattern]="'[a-zA-Z ]*'"/>
+            <div [hidden]="!f.submitted || !student_last_name.hasError('required')" class="errorClass">Last Name is required</div>
+            <div [hidden]="!student_last_name.hasError('pattern')" class="errorClass">Only alphabets allowed</div>
         </div>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_active_email.valid }">
             <label for="student_active_email">Email Id *</label>
             <input type="text" class="form-control" name="student_active_email" [(ngModel)]="studentData.student_active_email" [disabled]="studentData.student_id ? true : null" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" #student_active_email="ngModel" required>
-            <div *ngIf="f.submitted && student_active_email.errors && student_active_email.errors.required"  class="help-block">EmailId is required</div>
+            <div *ngIf="f.submitted && student_active_email.errors && student_active_email.errors.required"  class="help-block">Email Id is required</div>
             <div *ngIf="student_active_email.errors && student_active_email.errors.pattern" class="help-block">Not valid email!</div>
         </div>
         <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !student_password.valid}">

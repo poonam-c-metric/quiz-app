@@ -5,7 +5,7 @@ var emailTemplates = require('email-templates');
 
 // Its not a good idea to provide your credentials like this, they should come from an external source. This is only for the demo.
 var EMAIL_ACCOUNT_USER = 'poonam.gokani.0@gmail.com';
-var EMAIL_ACCOUNT_PASSWORD = 'poonam@2017'
+var EMAIL_ACCOUNT_PASSWORD = 'poonam@2022'
 var YOUR_NAME = 'Poonam';
 
 //reusable transport, look at the docs to see other service/protocol options

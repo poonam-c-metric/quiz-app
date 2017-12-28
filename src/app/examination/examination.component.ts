@@ -169,14 +169,19 @@ export class ExaminationComponent implements OnInit {
       answer['question_id'] = qdata;
       displayData['question_text'] = this.questionData[qdata].question_text;
       for(let ansdata in this.questionData[qdata].answers){
-        if(this.questionData[qdata].question_type =='multiple' && this.questionData[qdata].answers[ansdata]['attempted'] == true){
+        console.log('inside:'+this.questionData[qdata].question_type);
+        console.log('type:'+typeof this.questionData[qdata].question_type);
+        console.log(this.questionData[qdata].answers[ansdata]['attempted']);
+        if(this.questionData[qdata].question_type ==='multiple' && this.questionData[qdata].answers[ansdata]['attempted'] ){
+          console.log('multiple type');
           if(answer['answer_id'] == undefined){
             answer['answer_id'] = [];
             displayData['your_answer'] = [];
           }
           answer['answer_id'].push(this.questionData[qdata].answers[ansdata]['answer_id']);
           displayData['your_answer'].push(this.questionData[qdata].answers[ansdata]['answer_text']);
-        }else if(this.questionData[qdata].question_type =='single' && this.questionData[qdata].answers[ansdata]['attempted'] == true) {
+        }else if(this.questionData[qdata].question_type ==='single' && this.questionData[qdata].answers[ansdata]['attempted'] ) {
+          console.log('single type');
           answer['answer_id'] = this.questionData[qdata].answers[ansdata]['answer_id'];
           displayData['your_answer'] = this.questionData[qdata].answers[ansdata]['answer_text'];
         }
@@ -202,14 +207,24 @@ export class ExaminationComponent implements OnInit {
     this.studentModuleService.saveStudentAnswer({'answers' : this.savedAnswer, 'resource_id': this.contentID , 'student_id': student_id , 'certificate_id': certificate_id, 'resultData' : this.resultData, 'student_email': student_email})
       .subscribe(
           data => {
+            console.log(data);
             if(data.status=="1"){
               console.log('Inside Save Student Result');
               console.log(data.result);
               this.resultDashoboard = true;
               //this.saveStudentResult();
+            }else{
+              this.toastyService.error({
+                title: data.code,
+                msg: 'Please Attempt Questions First',
+                showClose: true,
+                timeout: 5000,
+                theme: "material"
+              });
             }
           },
           error => {
+              console.log(error);
               let err = error.json();
               this.toastyService.error({
                   title: err.code,
@@ -262,6 +277,7 @@ export class ExaminationComponent implements OnInit {
     this.contentService.getTestTime(contentid)
       .subscribe(
           data => {
+            console.log(data['test_time']);
             if(data['test_time']!=undefined){
               this.testtime = data['test_time'];
               //this.timeArr = this.testtime.split(":");
@@ -287,7 +303,7 @@ export class ExaminationComponent implements OnInit {
           this.hoursDisplay = this.getHours(this.ticks);
           if(this.secondsDisplay == this.timeArr[2].split('.')[0] && this.minutesDisplay == this.timeArr[1] && this.hoursDisplay == this.timeArr[0]){
             this.sub.unsubscribe();
-            this.generateResultDashboard();
+            //this.generateResultDashboard();
           }
         }
     );
@@ -348,6 +364,7 @@ export class ExaminationComponent implements OnInit {
     this.msLeft = this.endTime - (+new Date);
     if ( this.msLeft < 1000 ) {
         this.element.innerHTML = "Test Time's over!";
+        this.generateResultDashboard();
     } else {
         this.time = new Date( this.msLeft );
         this.hours = this.time.getUTCHours();

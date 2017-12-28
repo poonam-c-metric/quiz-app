@@ -29,6 +29,10 @@ export class SidebarComponent implements OnInit {
     }
 
     getCertificateId(routerLink,elem){
+        if(localStorage.getItem('currentUser')==null){
+          this.router.navigate(['/login']);
+          return true;
+        }
         if(localStorage.getItem('certificate_id')!="" && localStorage.getItem('certificate_id')!=undefined){
            this.router.navigate([routerLink]);
            let elements = elem.target.parentElement.getElementsByClassName("list-group-item active");

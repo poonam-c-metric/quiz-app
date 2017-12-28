@@ -55,7 +55,7 @@
                     <td class="text-right"><a [routerLink]="['/questions',item.resource_id]">Manage Test</a></td>
                     <td>
                         <a class="btn btn-small btn-warning btn-sm" [routerLink]="['/content/edit',item.resource_id]"><i class="fa fa-pencil" title="Update"></i></a>
-                        <a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteContentModal" (click)="openDeleteContentModal(item.resource_id,deleteContentModal)"><i class="material-icons">delete</i></a>
+                        <a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteContentModal" (click)="openDeleteContentModal(item.resource_id,deleteContentModal)" title="Delete"><i class="material-icons">delete</i></a>
                     </td>
                 </tr>
                 </tbody>

@@ -48,7 +48,7 @@ app.post('/createStudent', IsAuthenticated, function(req, res){
         req.body['student_password'] = common.encrypt(req.body['student_password']);
         req.body.date_added = moment().format('YYYY-MM-DD');
         req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
-        connection.query('SELECT * FROM cs_students where student_active_email=?',req.body['student_active_email'],
+        connection.query('SELECT * FROM cs_students where student_active_email=? and is_active=?',[req.body['student_active_email'],0],
           function(err, rows) {
               if (err) {
                 throw err;
@@ -296,7 +296,7 @@ function sendStudentConfirmationEmail(req,userid){
     // relative to views/ directory - don't include extension!
   var RELATIVE_TEMPLATE_PATH = 'templates/confirm-email/index';
 
-  var html =  "<h1>Dear "+ req.student_first_name + " "+ req.student_last_name +",</h1><br><br>" +
+  var html =  "<h3>Dear "+ req.student_first_name + " "+ req.student_last_name +",</h3><br>" +
   "You have been registered for a Micro-Learning course by testorg.<br><br>"+
   "Login :"+
   "<a href="+api_url+"'/#/online-exam?accessToken="+req.accessToken+"'>"+api_url+"/#/online-exam?&accessToken="+req.accessToken+"</a><br><br>"+

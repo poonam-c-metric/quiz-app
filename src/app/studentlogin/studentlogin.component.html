@@ -28,7 +28,7 @@
     </form>
 </div>
 
-<modal #forgetpasswordModal title="Forgot Password?" cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && resetPassword(emailid.value,forgetpasswordModal)">
+<modal #forgetpasswordModal cancelButtonLabel="cancel" submitButtonLabel="submit" (onSubmit)="emailid.valid && resetPassword(emailid.value,forgetpasswordModal)">
     <modal-content>
         <label for="emailid">EmailId</label>
         <input type="text" class="form-control" name="emailid" [(ngModel)]="model.emailid" #emailid="ngModel" required email/>
