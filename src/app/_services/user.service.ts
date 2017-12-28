@@ -57,6 +57,7 @@ export class UserService {
     }
 
     updateUserData(userdetails : Object){
+        console.log(userdetails);
         return this.http.put('/api/updateUser',{ userdata: userdetails })
             .map((response: Response) => {
                 let data = response.json();

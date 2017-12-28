@@ -26,7 +26,7 @@ app.use(router);
 
  app.use(function(req, res, next) { //allow cross origin requests
   res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Credentials", true);
   next();
@@ -72,7 +72,7 @@ app.post('/createCertificate',IsAuthenticated,function(req, res){
   {
     req.body.date_added=moment().format('YYYY-MM-DD');
     req.body.ip_added = req.connection.remoteAddress.replace(/^.*:/, '');
-    connection.query('SELECT * FROM cs_certificate where certificate_name=?',req.body['certificate_name'],
+    connection.query('SELECT * FROM cs_certificate where certificate_name=? and is_delete = ?',[req.body['certificate_name'],0],
       function(err, rows) {
           if (err) {
             throw err;
@@ -164,7 +164,7 @@ var storage = multer.diskStorage({ //multers disk storage settings
     },
     filename: function (req, file, cb) {
       var datetimestamp = Date.now();
-      cb(null, file.originalname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
+      cb(null, file.originalname.split('.')[0] + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     }
 });
 
@@ -175,6 +175,7 @@ var upload = multer({ //multer settings
 
 /** API path that will upload the files */
 app.post('/upload', function(req, res) {
+  console.log('Inside File Upload');
   upload(req,res,function(err){
     if(err){
       res.status(200).json({'status':0,'message': err.message ,'code': 'FAIL'});

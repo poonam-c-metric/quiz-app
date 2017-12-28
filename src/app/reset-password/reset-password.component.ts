@@ -27,7 +27,7 @@ export class ResetPasswordComponent implements OnInit {
         .subscribe(
             data => {
                 this.toastyService.success({
-                    title: data.code,
+                    title: 'Success',
                     msg: data.message,
                     showClose: true,
                     timeout: 5000,
@@ -37,7 +37,7 @@ export class ResetPasswordComponent implements OnInit {
             error => {
                 let err = error.json();
                 this.toastyService.error({
-                    title: err.code,
+                    title: 'Error',
                     msg: err.message,
                     showClose: true,
                     timeout: 5000,

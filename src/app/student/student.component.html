@@ -15,7 +15,7 @@
     		 <a [routerLink]="['/students/add']" class="btn btn-cs">Add New</a>
     	</span>
         <label class="custom-file-upload btn btn-cs" style="float:right;margin-right:20px;">
-            <i class="fa fa-plus-square"></i>Upload Student
+            <i class="fa fa-plus-square"></i> &nbsp; Upload Students
             <input #fileupload type="file" name="studentfile" ng2FileSelect [uploader]="uploader">
         </label>
         {{ this.errorMessage }}
@@ -40,10 +40,10 @@
                 <thead>
                 <tr>
                     <th style="width: 20%">
-                        <mfDefaultSorter by="student_first_name">FirstName</mfDefaultSorter>
+                        <mfDefaultSorter by="student_first_name">First Name</mfDefaultSorter>
                     </th>
                     <th style="width: 40%">
-                        <mfDefaultSorter by="student_last_name">LastName</mfDefaultSorter>
+                        <mfDefaultSorter by="student_last_name">Last Name</mfDefaultSorter>
                     </th>
                     <th style="width: 10%">
                         <mfDefaultSorter by="student_active_email">Email</mfDefaultSorter>
@@ -53,7 +53,7 @@
                 </tr>
                 <tr>
                     <th colspan="5">
-                        Filter by name:
+                        Filter by First Name:
                         <input class="form-control" [(ngModel)]="filterQuery"/>
                     </th>
                 </tr>
@@ -65,7 +65,7 @@
                     <td class="text-right">{{item.student_active_email}}</td>
                     <td>
                     	<a class="btn btn-small btn-warning btn-sm" [routerLink]="['/students/edit',item.student_id]"><i class="fa fa-pencil" title="Update"></i></a>
-						<a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteStudentModal" (click)="openDeleteStudentModal(item.student_id,deleteStudentModal)"><i class="material-icons">delete</i></a>
+						<a class="btn btn-small btn-danger btn-sm" data-toggle="modal" data-backdrop="false" href="#deleteStudentModal" (click)="openDeleteStudentModal(item.student_id,deleteStudentModal)" title="Delete"><i class="material-icons">delete</i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -80,8 +80,11 @@
         </div>
 	</div>
 </div>
-
-<modal #deleteStudentModal title="Confirm Delete?" cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="deleteStudent(studentDeleteID,deleteStudentModal)">
+<!-- title="Confirm Delete?" -->
+<modal #deleteStudentModal cancelButtonLabel="No" submitButtonLabel="Yes" (onSubmit)="deleteStudent(studentDeleteID,deleteStudentModal)">
+    <modal-header>
+        Confirm Delete?
+    </modal-header>
     <modal-content>
         Are you sure you want to delete this record permanently ?
     </modal-content>
